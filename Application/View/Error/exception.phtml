@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8" />
+	<style>
+	body{
+	margin:0px;
+	padding:0px
+	}
+	#baner{
+		background-color:#92CD00;
+		padding:7px;
+		margin:0px;
+		font-size:18px;
+		padding: 15px 25px;
+		border-bottom: 3px solid #669900
+	}
+	pre{
+	 margin:20 auto;
+	 overflow: auto;
+	 width:95%
+	}
+	</style>
+	<title><?php echo \Spawn\Filter::xss($error->getMessage()); ?></title>
+</head>
+<body>
+
+<p id='baner'><?php echo \Spawn\Filter::xss($error->getMessage()); ?></p>
+<pre>
+<?php
+echo $error->getTraceAsString();
+?>
+<hr/>
+<?
+print_r($error);
+?>
+</pre>
+
+</body>
+</html>

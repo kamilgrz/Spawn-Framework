@@ -1,0 +1,19 @@
+<?php
+
+if($back==true){
+	echo '<a href="'.str_replace('__PAGE__',($page-1),$href).'">« Back</a> | ';
+}else{
+	echo '« Back | ';
+}
+
+for($i=0; $i<$pages; $i++){
+	$url=' <a href="'.str_replace('__PAGE__',$i,$href).'">'.($i+1).'</a>';
+	echo ($page==($i))? '<b>'.$url.'</b> |' : $url.' | ';
+}
+
+if($next==true){
+	echo ' <a href="'.str_replace('__PAGE__',($page+1),$href).'">Next »</a>';
+}else{
+	echo ' Next »';
+}
+?>
