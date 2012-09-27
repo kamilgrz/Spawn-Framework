@@ -22,6 +22,19 @@ class Arr
 	{		
 		return (array_keys(array_keys($val)) !== array_keys($val))? true : false;
 	}
+	
+	/**
+	*@param - array - array to check
+	*@return bool
+	*/
+	public static function isArray($value)
+	{
+		if (is_array($value)){
+			return TRUE;
+		}else{
+			return (is_object($value) AND $value instanceof Traversable);
+		}
+	}
 	 
 	/**
 	*return param of array 

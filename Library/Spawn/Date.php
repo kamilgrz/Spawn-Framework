@@ -10,7 +10,13 @@
 */
 namespace Spawn;
 class Date
-{
+{	
+	const MINUTE = 60;
+	const HOUR = 3600;
+	const DAY = 86400;
+	const WEEK = 604800;
+	const MONTH = 2629744;
+	const YEAR = 31556926;
 
 	/**
 	*return actual date

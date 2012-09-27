@@ -5,7 +5,7 @@
 * Router
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2011 Paweł Makowski
+* @copyright (c) 2010-2012 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 */
 namespace Spawn;
@@ -39,8 +39,12 @@ class Router
 	{
 	    $this -> _uri = $uri;
 		$this -> _config = new Config('Router');
-		
+				
 		$this -> _staticRoute();
+		if(false == $this -> _isRoute){		
+		    $this -> _callRoute();
+		}
+		
 		if(false == $this -> _isRoute){
 		    $this -> _dynamicRoute();
 		}
@@ -55,16 +59,31 @@ class Router
 		$this -> _config -> clear();
 	}
 	
+	protected function _callRoute()
+	{
+		$cfgArr = $this -> _config -> get('Call');
+		$req = $this -> _uri -> path;
+		foreach($cfgArr as $key){
+			$this -> _isRoute = (bool) $this -> _val = $key($req);
+			if(true == $this -> _isRoute) {
+				$this -> _location();
+				$this -> _uri -> path = preg_replace('#'.$this -> _uri -> param(0).'#', $this -> _val['request_uri'], $this -> _uri -> path);
+				break;
+			}
+		}
+	}
+	
 	protected function _staticRoute()
 	{
 	    $cfgArr = $this -> _config -> get('Static');
 	    $act = $this -> _uri -> param(0);
 	    if( isset( $cfgArr[ $act ] ) ){
 	        $this -> _isRoute = true;
-							
-			$this -> _val = $cfgArr[ $act ];
+	        $cfgArr[ $act ] = ( !is_callable($cfgArr[ $act ]) )? $cfgArr[ $act ] : $cfgArr[ $act ]($this -> _uri -> path);																			
+			$this -> _val = $cfgArr[ $act ];			
 			$this -> _location();			
-			$this -> _uri -> path = preg_replace('#'.$act.'#', $cfgArr[ $act ]['request_uri'], $this -> _uri -> path);			
+			$this -> _uri -> path = $cfgArr[ $act ]['request_uri'];
+			//$this -> _uri -> path = preg_replace('#'.$act.'#', $cfgArr[ $act ]['request_uri'], $this -> _uri -> path);			
 	    }
 	}
 	
@@ -76,7 +95,7 @@ class Router
 		{
 			if( preg_match('#'.$key.'#', $req) ){
 				$this -> _isRoute = true;
-							
+				$val = ( !is_callable($val) )? $val : $val($req);					
 				$this -> _val = $val;
 				$this -> _location();
 				$this -> _uri -> path = preg_replace('#'.$key.'#', $val['request_uri'], $req);

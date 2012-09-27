@@ -10,6 +10,8 @@
 * @package View
 */
 namespace Spawn;
+use \Spawn\View\Helper;
+
 
 class View 
 {
@@ -39,8 +41,8 @@ class View
          * path to compiled view files
          * @var string
          */
-	public $path = 'Application/View/';
-	
+	protected $_path = 'Application/View/';
+		
 		
 	/**
 	*set new value to view params
@@ -102,6 +104,26 @@ class View
 	}
 	
 	/**
+	* set path to files
+	* 
+	* @param string $path
+	* @return $this
+	*/
+	public function setPath($path)
+	{
+		$this->_path = $path;
+		return $this;
+	}
+	
+	/**
+	* @return string
+	*/
+	public function getPath()
+	{
+		return $this->_path;
+	}
+	
+	/**
 	*declare sf_tpl instance
 	*modyfication $this->_path if $viewPath = false
 	*
@@ -115,7 +137,7 @@ class View
 		if(true == $viewPath){
 			$this -> _tpl -> setCompilePath( $this -> _path );
 		}else{
-			$this -> path = $this -> _tpl -> getCompilePath();
+			$this -> _path = $this -> _tpl -> getCompilePath();
 		}
 
 		return $this;
@@ -186,7 +208,6 @@ class View
 	    return $this;
 	}
 	
-	
 	/**
 	*declare view file
 	*
@@ -211,15 +232,17 @@ class View
 	}
 		
 	/**
-         * @return string
-         */
-	public function render()
+	* @param array $values values to self::assign()
+    * @return string
+    */
+	public function render(array $values = array())
 	{
+		$this -> assign($values);
 		ob_start();		
 		
 		extract($this -> _values);
 				
-		include(ROOT_PATH . $this -> path . $this -> _page);
+		include(ROOT_PATH . $this -> _path . $this -> _page);
 		
 		$page = ob_get_contents();
 		ob_end_clean();

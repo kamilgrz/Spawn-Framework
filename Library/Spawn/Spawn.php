@@ -56,7 +56,6 @@ final class Spawn
 			
 			$uri = new Request\Uri();
 			$uri -> initPath() -> initArgs();
-			
 			$controller ='\Controller\\'.ucfirst($uri->param(0, $this -> controller) );	
 			$action     = $uri->param(1, $this -> action ).'Action';
 			
@@ -68,8 +67,8 @@ final class Spawn
 			}else{
 			    $uri -> setParam(0, $uri->param(0, $this -> controller) ) -> setParam(1, $uri->param(1, $this -> action ) );			    
 			}				
-											
-			if( ! method_exists($controller, $action) ){
+			
+			if( ! method_exists($controller, $action) ){			
 			   self::error404();
 			}	
 			

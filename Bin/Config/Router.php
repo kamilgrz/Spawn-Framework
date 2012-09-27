@@ -6,6 +6,8 @@ $config['Static'] = array(
                 )      
 );
 
+$config['Call'] = array();
+
 $config['Dynamic'] = array();
 
 return $config;

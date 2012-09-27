@@ -86,7 +86,7 @@ class Valid extends \Spawn\Valid\Core
          */
 	public function __construct(array $arr, array $data = array())
 	{
-	    $this->initCoreFunct();
+		$this->initCoreFunct();
 		$this -> _toValid = $arr;
 		$this -> _toValidData = $data;
 	}
@@ -150,11 +150,20 @@ class Valid extends \Spawn\Valid\Core
 	public function validAll()
 	{
 		foreach($this -> _toValidData as $name => $data){
-			foreach($data as $key => $val){
-				$isValid = ( isset($this -> _toValid[ $name ]) )? $this -> _validatorFunct[ $key ]($this -> _toValid[ $name ], $val) : false;
-				if( !$isValid ){
+			$isValid = true;
+			if(isset($data['required']) && !isset($this -> _toValid[ $name ])){
 					$this -> _toValidError[] = $name;
-					break;
+					$isValid=false;
+			}
+			if(false !== $isValid){
+				foreach($data as $key => $val){					
+					if( isset($this -> _toValid[ $name ]) && $key != 'required' ){
+						$isValid = $this -> _validatorFunct[ $key ]($this -> _toValid[ $name ], $val);
+					}					
+					if( !$isValid ){
+						$this -> _toValidError[] = $name;
+						break;
+					}
 				}
 			}
 		}
@@ -190,6 +199,58 @@ class Valid extends \Spawn\Valid\Core
 	public function getError()
 	{
 		return $this -> _toValidError;
+	}
+	
+	/**
+	* code test
+	*
+	* @return array
+	*/
+	public function test()
+	{
+		$v= new \Spawn\Valid(array(
+			'name'=>'Spawnm',
+			'email'=>'spawnm@spawnm.pl'
+		));
+		$v->setRules(array(
+				'name'=>array(
+					'maxStrLength'=>55,
+					'minStrLength'=>3,
+					'required'=>true
+				),
+				'pass'=>array(
+					'minStrLength'=>6,
+					'required'=>true
+				),
+				'email'=>array(
+					'mail'=>'',
+				),
+		));
+		//false, array(pass)
+		$res['test_1'] = array($v->validAll()->isValid(), $v->getError());
+		
+		$v= new \Spawn\Valid(array(
+			'name'=>'damn',
+			'pass'=>'superPass123',
+			'date'=>'2012-01-10'
+		));
+		$v->setRules(array(
+				'name'=>array(
+					'maxStrLength'=>55,
+					'minStrLength'=>3,
+					'required'=>true
+				),
+				'pass'=>array(
+					'minStrLength'=>6,
+					'required'=>true
+				),
+				'date'=>array(
+					'regex'=>'/^\d{4}-\d{1,2}-\d{1,2}$/',
+				),
+		));
+		//true, array()
+		$res['test_2'] = array($v->validAll()->isValid(), $v->getError());
+		return $res;
 	}
 
 }//valid

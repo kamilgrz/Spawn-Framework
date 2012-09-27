@@ -85,7 +85,7 @@ class Loader
      * @return $this
      */
     public function load($className)
-    {
+    {    	
         if( !isset( $this->_classPath[ $className ] ) ){
             $className = ltrim($className, '\\');
             $fileName  = '';
@@ -100,7 +100,6 @@ class Loader
         }else{
             $fileName = $this->_classPath[ $className ];
         }
-        
         foreach($this->_includePath as $key){
             if( file_exists(ROOT_PATH . $key . $fileName) ){
 		        require_once(ROOT_PATH . $key . $fileName);

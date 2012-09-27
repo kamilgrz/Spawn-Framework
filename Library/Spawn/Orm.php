@@ -45,6 +45,11 @@ class Orm
          */
     protected $_filter = array();
 	
+	/**
+	* @var array
+	*/
+	protected $_validError = array();
+	
 	/* MAGIC METHODS  */
 	
 	
@@ -54,7 +59,8 @@ class Orm
          */
 	public function __construct( Db $db = null)
 	{
-		$this -> _db = (null == $db)? new Db() : $db;				
+		$this -> _db = (null == $db)? new Db() : $db;			
+		$this -> filter('Default');		
 	}
 	
 	/**
@@ -126,6 +132,59 @@ class Orm
 		return new $class( $db );
 	}
 	
+	/**
+	* set find data (data to save())
+	*
+	* @param array
+	* @return self
+	*/
+	public function setData(array $data)
+	{
+		$this -> _find = $data;
+		return $this;
+	}
+	
+	/**
+	* get find data (data to save())
+	*
+	* @return array
+	*/
+	public function getData()
+	{
+		return $this -> _find;
+	}
+	
+	/**
+	* get form structure
+	*
+	* @return array
+	*/
+	public function getForm()
+	{
+		return array();
+	}
+	
+	/**
+	* declare default values to insert/select/update
+	*
+	* @return array
+	*/
+	public function loadDefaultData()
+	{
+	}
+	
+		
+	/**
+	* rules to Valid()->setRules()
+	*
+	* @param string $name
+	* @return array
+	*/
+	public function getRules()
+	{
+		return array();
+	}
+		
 	/**
 	*find one record
 	*
@@ -205,12 +264,36 @@ class Orm
 	}
 	
 	/**
+	* before save
+	* return false to break save
+	* @return bool|none
+	*/
+	public function beforeSave()
+	{ 
+		return true; 
+	}
+	
+	/**
 	*insert or update $_find values (use after find() method) 
 	*
 	*@param array $where
 	*@return $this
 	*/
 	public function save($where = null)
+	{
+		if($this->beforeSave()!==false){
+			return $this->_save($where);
+		}
+		return false;
+	}
+	
+	/**
+	*insert or update $_find values (use after find() method) 
+	*
+	*@param array $where
+	*@return $this
+	*/
+	protected function _save($where = null)
 	{
 		$info=0;		
 		if(null != $this -> _find){			
@@ -221,9 +304,10 @@ class Orm
 				}
 			}
 
-                        $req = $this -> _useFilter($req);
-
-                        $db = new Db;
+            $req = $this -> _useFilter($req);
+		
+            $db = new Db;
+			
 			if( isset($req[ $this -> _tableKey ]) ){
 				if(is_array($this -> _find)){
 					$where = ( null != $where )? $where:
@@ -248,7 +332,7 @@ class Orm
 	*/
 	public function insert(array $values)
 	{
-                $values = $this -> _useFilter($values);
+        $values = $this -> _useFilter($values);
 		$this -> _db -> sqlClear();
 		return $this -> _db -> insert($this -> _tableName, $values);
 	}
@@ -261,7 +345,7 @@ class Orm
 	*/
 	public function insertAll(array $values)
 	{
-                $values = $this -> _useFilter($values);
+        $values = $this -> _useFilter($values);
 		return $this -> _db -> insertAll($this -> _tableName, $values);
 	}
 	
@@ -275,7 +359,6 @@ class Orm
 	public function delete( $param=array(), $sep = ' AND ')
 	{
 		$param = ( is_array($param) )? $param : array($this -> _tableKey => $param);
-                $param = $this -> _useFilter($param);
 		return $this -> _db -> delete($this -> _tableName, $param, $sep = ' AND ');
 	}
 	
@@ -316,7 +399,7 @@ class Orm
 	{
 		
 		$req = $this -> deleteUnusedValues($req);
-		
+		$req = $this -> _useFilter($req);
 		//create where
 		$where = (is_array($where))? $where : array($this -> _tableKey => $where);
 		
@@ -395,9 +478,36 @@ class Orm
 		$struct = array();
 		$pri = null;
 		
+		$rules='';
+		$form='';
 		foreach($structTable as $key){
-			$struct[] = $key['Field'];
-			if($pri == null AND trim($key['Key']) == 'PRI') $pri = $key['Field'];			
+			$struct[] = $key['Field'];			
+						
+			if(!($pri == null AND trim($key['Key']) == 'PRI')){
+				$ftype = (strpos($key['Type'], 'text')!==false)? 'textarea' : 'text';
+				$form .= '                    \''.str_replace('_',' ',$key['Field']).'\' => array(\'name\' => \''.$key['Field'].'\', \'type\' => \''.$ftype.'\'), '.PHP_EOL;
+			
+				$rule='';
+				if(strpos($key['Type'], 'varchar') !== false){ 
+					$max = preg_replace('#varchar\((.*)\)#', '$1', $key['Type']);
+					$rule.='\'maxStrLength\' => '.$max .', ';
+				}
+				if(strpos($key['Type'], 'datetime') !== false or strpos($key['Type'], 'timestamp') !== false){ 
+					$rule.='\'regex\' => \'/^\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}$/\', ';
+				}
+				if(strpos($key['Type'], 'date') !== false){ 
+					$rule.='\'regex\' => \'/^\d{4}-\d{1,2}-\d{1,2}$/\', ';
+				}
+				if(strpos(strtolower($key['Field']), 'mail') !== false){ 
+					$rule.='\'mail\' => \'\', ';
+				}
+				if(strpos(strtolower($key['Field']), 'url') !== false or strpos(strtolower($key['Field']), 'href') !== false){ 
+					$rule.='\'url\' => \'\', ';
+				}
+				$rules .= '                    \''.$key['Field'].'\' => array('.$rule.'), '.PHP_EOL;
+			}else{
+				$pri = $key['Field'];	
+			}	
 		}
 		$struct = implode('\', \'', $struct);
 		
@@ -409,10 +519,25 @@ class Orm
 		//create html		
 		$file = '<?php'.PHP_EOL;
 		$file .= 'namespace Model\Orm'.$cSpace.';'.PHP_EOL;
-		$file .= 'class '.$cName.' extends \Spawn\Orm {'.PHP_EOL;
+		$file .= 'class '.$cName.' extends \Spawn\Orm'.PHP_EOL;
+		$file .= '{'.PHP_EOL;
 		$file .= '        protected $_tableName = \''.$name.'\';'.PHP_EOL;
 		$file .= '        protected $_tableKey = \''.$pri.'\';'.PHP_EOL;
 		$file .= '        protected $_structure = array(\''.$struct.'\');'.PHP_EOL;
+		$file .= ''.PHP_EOL;
+		$file .= '        public function getRules()'.PHP_EOL;
+		$file .= '        {'.PHP_EOL;
+		$file .= '                return array('.PHP_EOL;
+		$file .= $rules;
+		$file .= '                );'.PHP_EOL; 
+		$file .= '        }'.PHP_EOL;
+		$file .= ''.PHP_EOL;
+		$file .= '        public function getForm()'.PHP_EOL;
+		$file .= '        {'.PHP_EOL;
+		$file .= '                return array('.PHP_EOL;
+		$file .= $form; 
+		$file .= '                );'.PHP_EOL; 
+		$file .= '        }'.PHP_EOL;
 		$file .= '}';
 		
 		//create orm file
@@ -459,18 +584,28 @@ class Orm
                 if(!method_exists($this, $name)){
                     throw new OrmException('Filter '.$name.' not found!');
                 }
-                if(is_array($data)){
+                if(is_array($data) && isset($data[0])){
                     $result = array();
                     foreach($data as $key){
                         $result[] = $this -> $name($key);
                     }
                     $data = $result;
-                }else{
+                }else{							
                     $data = $this -> $name($data);
                 }
             }
             return $data;
         }
+		
+		/**
+		* Default filter 
+		* @param array|object $data
+		* @return array|object
+		*/
+		protected function _filterDefault($data)
+		{  
+			return $data;
+		}
 	
 }//orm
 

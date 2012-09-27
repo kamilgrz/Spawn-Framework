@@ -10,6 +10,8 @@
 * @package Controller
 */
 namespace Spawn\Controller;
+use \Spawn\View;
+
 class Template extends \Spawn\Controller
 {
 	
@@ -17,7 +19,13 @@ class Template extends \Spawn\Controller
          * template name
          * @var string
          */
-	public $tmp;
+	public $tmp = null;
+	
+	/**
+	* false or 'content' View object
+	* @var bool/object
+	*/
+	public $content = false;
 
         /**
          * true if \Spawn\View\Tpl
@@ -38,21 +46,44 @@ class Template extends \Spawn\Controller
 	public $tplCache = true;
 	
 	/**
-	* load View to $view
+	* load View to $view and $view->content
 	*/
 	public function __construct()
 	{
-		$this -> view = new \Spawn\View($this -> tmp);
+		if(null === $this -> tmp) {
+			$uri = new \Spawn\Request\Uri;
+			$this -> tmp = ucfirst($uri->param(0));
+		} 
+		$this -> view = new View($this -> tmp);		
+		$this -> view = $this -> _tpl($this -> view);
 		
-		if(true == $this -> isTpl){
-			$this -> view -> isTpl();
-			if(true == $this->tplCache && !$this -> view -> isCache()){
-			   $this -> view -> compile();
-			   $this -> view -> save();
-			} 
+		if( true === $this -> content) {
+			$this -> view -> content = new View();		
+			$this -> view -> content = $this -> _tpl($this -> view -> content);
 		}
 	}
+	
+	/**
+	* load and compile template
+	*
+	* @var View
+	* @return View
+	*/
+	private function _tpl($view)
+	{
+		if(true === $this -> isTpl){
+				$view -> isTpl();
+				if( true == $this -> tplCache && !$view -> isCache() ){
+					$view -> compile();
+					$view -> save();
+				} 
+		}
+		return $view;
+	}
 			
+	/**
+	*
+	*/	
 	public function init(){}
 	
 	/**

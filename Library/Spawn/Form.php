@@ -34,6 +34,16 @@ class Form
 	protected $_toErrorArray = array();
 	
 	/**
+	* @var string 
+	*/
+	protected $_rowData = '<div class="FormRow"><label>{Label}</label> {Input} <span>{About}</span></div>';
+	
+	/**
+	* @var string
+	*/ 
+	protected $_rowDataError = '<div class="FormRow FormRowError"><label>{Label}</label> {Input} <span>{About}</span></div>';
+	
+	/**
 	* open form tag 
 	*
 	* @param string $action 
@@ -46,15 +56,6 @@ class Form
 		//array('enctype'=>'multipart/form-data')
 		$params = (null != $params)? $this -> _params($params) : '';
 		return '<form action="'.$action.'" method="'.$method.'" '.$params.'>'.PHP_EOL;
-	}
-	
-	/**
-	* construct
-	*/
-	public function __construct()
-	{
-		$this -> _rowData = '<div class="SfFormRow"><label>{Label}</label> {Input} {About}</div>'.PHP_EOL;
-		$this -> _rowDataError = '<div class="SfError"><label>{Label}</label> {Input} {About}</div>'.PHP_EOL;
 	}
 	
 	/**
@@ -235,6 +236,25 @@ class Form
 	}
 	
 	/**
+	* create checkbox list
+	* @param array $values self::radio values 
+	* @param string $sep
+	* @return string
+	*/
+	public function radioList($name, array $values, $check = null, $sep = ' ')
+	{
+		$str = '';		
+		foreach($values as $key => $val){
+			$checked = false;
+			if($check == $key){
+				$checked = true;
+			}
+			$str .= $this->radio($name, $key, $checked).' '.$val . $sep . PHP_EOL;
+		}		
+		return $str;
+	}
+	
+	/**
 	* create intup type checkbox
 	*
 	* @param string $name
@@ -248,6 +268,25 @@ class Form
 		$check = ($check == false)? '' : ' checked="checked" ';
 		$params = (null != $params)? $this -> _params($params) : '';
 		return '<input type="checkbox" name="'.$name.'" value="'.Filter::xss($value).'" '.$params.' '.$check.'>';
+	}
+	
+	/**
+	* create checkbox list
+	* @param array $values self::checkbox values 
+	* @param string $sep
+	* @return string
+	*/
+	public function boxList($name, array $values, array $check = array(), $sep = ' ')
+	{
+		$str = '';		
+		foreach($values as $key => $val){
+			$checked = false;
+			if(in_array($key, $check)){
+				$checked = true;
+			}
+			$str .= $this->checkbox($name.'[]', $key, $checked).' '.$val . $sep . PHP_EOL;
+		}		
+		return $str;
 	}
 	
 	/**
@@ -438,6 +477,14 @@ class Form
 	}
 	
 	/**
+	* @return string
+	*/
+	public function getRowTpl()
+	{
+		return $this -> _rowData;
+	}
+	
+	/**
 	* declare new row() error template
 	*
 	* @param string $data
@@ -447,6 +494,14 @@ class Form
 	{
 		$this -> _rowDataError = $data;
 		return $this;
+	}
+	
+	/**
+	* @return string
+	*/
+	public function getRowErrorTpl()
+	{
+		return $this -> _rowDataError;
 	}
 	
 	/**
@@ -552,6 +607,14 @@ class Form
 				case 'checkbox':
 					$val = Arr::update($val, array('name', 'value', 'params','checked'), '');
 					$inp = $this -> checkbox($val['name'], $val['value'],$val['checked'] , $val['params']);
+				break;
+				case 'boxList':
+					$val = Arr::update($val, array('checked', 'sep'), '');
+					$inp = $this -> boxList($val['name'], $val['values'], $val['checked'], $val['sep']);
+				break;
+				case 'radioList':
+					$val = Arr::update($val, array('checked', 'sep'), '');
+					$inp = $this -> radioList($val['name'], $val['values'], $val['checked'], $val['sep']);
 				break;
 				case 'file':
 					$val = Arr::update($val, array('css'), '');

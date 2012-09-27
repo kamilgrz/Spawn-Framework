@@ -22,7 +22,7 @@ class Cookie
          * @param bool $secure
          * @param bool $httponly
          */
-	public function set($name, $val = true, $cookieTime = 0, $path = '', $domain = '', $secure = false, $httponly = false)
+	public static function set($name, $val = true, $cookieTime = 0, $path = '', $domain = '', $secure = false, $httponly = false)
 	{
 		$cookieTime = ($cookieTime > 0 )? time() + $cookieTime: 0;
 		setcookie($name, $val, $cookieTime, $path, $domain, $secure, $httponly);
@@ -34,15 +34,15 @@ class Cookie
          * @param string $or
          * @return string
          */
-	public function get($name, $or = null){
-		return ( isset($_COOKIE[ $name ]) )? $_COOKIE[ $name ] : $or;
+	public static function get($name, $or = null){
+		return ( isset($_COOKIE[ $name ]) )? Filter::utf8($_COOKIE[ $name ]) : $or;
 	}
 	
 	/**
          *
          * @param string $name
          */
-	public function delete($name)
+	public static function delete($name)
 	{
 		if(isset($_COOKIE[ $name ])){
 			unset($_COOKIE[ $name ]);
@@ -52,7 +52,7 @@ class Cookie
         /**
          *
          */
-	public function deleteAll()
+	public static function deleteAll()
 	{
 		if(isset($_COOKIE)){
 			foreach($_COOKIE as $name){

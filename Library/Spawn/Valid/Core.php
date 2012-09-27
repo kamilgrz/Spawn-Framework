@@ -35,23 +35,39 @@ class Core
 		                return (bool)filter_var( $val, FILTER_VALIDATE_URL, $options );
 	                },
                 'maxStrLength' => function($str, $max) {
-		                return ( is_string($str) AND mb_strlen($str, 'utf-8') <= $max );
+		                return ( is_string($str) AND mb_strlen(trim($str), 'utf-8') <= $max );
 	                },
                 'minStrLength' => function($str, $min) {
-		                return ( is_string($str) AND mb_strlen($str, 'utf-8') >= $min );
+		                return ( is_string($str) AND mb_strlen(trim($str), 'utf-8') >= $min );
 	                },
 	            'max' => function($val, $max) {
-	                    return ( $val <= $max );
+	                    return ( (int)$val <= $max );
 	                },
 	            'min' => function($val, $min) {
-	                    return ( $val >= $min );
+	                    return ( (int)$val >= $min );
 	                },
-	        'simile' => function($str, $str2) {
+				'simile' => function($str, $str2) {
 	                    return ( $str === $str2 );
 	                },   
-	        'choices' => function($val, array $arr) {
+				'in' => function($val, array $arr) {
 	                    return ( in_array($val, $arr) );
-	                },               
+	                }, 
+				'captcha' => function($val, $name = 'default') {
+	                    $captcha = new \Spawn\Captcha();
+						if($captcha->isDeclared($name)){
+							$x= $captcha->isValid($val, $name);
+							echo (int)$x;
+							return $x;
+						}
+						return false;
+	                }, 	
+				'unique' => function($val, array $dbInfo) {
+	                    $i = \Spawn\Orm::factory($dbInfo[0])->where($dbInfo[1], $val)->count();
+						if($i>0){
+							return false;
+						}
+						return true;
+	                },		
                 'regex' => function($str, $reg) {
 		                if( preg_match($reg, $str) ){
 			                return true;

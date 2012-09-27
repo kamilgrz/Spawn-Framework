@@ -67,15 +67,16 @@ class Url
 		}
 			
 		$param = array();
+		$get = $_GET;
 		foreach($name as $key => $val){
-			if( isset($_GET[ $key ]) ){
-				unset($_GET[ $key ]);
+			if( isset($get[ $key ]) ){
+				unset($get[ $key ]);
 			}
 			$param[] = $key . '=' . $val;			
 		}
 		
 		$baseUrl = '?'.implode('&amp;', $param);	
-		$hbq = http_build_query($_GET, '', '&amp;');
+		$hbq = http_build_query($get, '', '&amp;');
 		$baseUrl .= ( strlen($hbq)>0 )?  '&amp;'.$hbq : '';	
 		
 		if( false == $base ){

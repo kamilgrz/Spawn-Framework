@@ -158,6 +158,32 @@ class Db
 		$this -> where .= $where;
 		return $this;
 	}
+	
+	/**
+         *
+         * @param string $name
+         * @param string|array $val
+         * @param string $funct
+         * @param string $sep
+         * @return Db
+         */
+	public function whereFunct($name, $val, $funct = 'IN' ,$sep = 'AND')
+	{		
+		$q = ('IN' !== strtoupper($funct))? '?' : implode(',', array_fill(0, count($val), '?'));
+
+		$in = $name.' '.$funct.'('.$q.')';
+		$where = ( !isset($this -> where) )?' WHERE '.$in : ' '.$sep.' '.$in;	
+		if(!is_array($val)){
+			$this -> _sql_args[] = $val;
+		}else{
+			foreach($val as $key){
+				$this -> _sql_args[] = $key;
+			}
+		}	
+		$this -> where .= $where;
+		return $this;
+	}
+	
 		
 	/**
 	*add where with or separator to sql query
