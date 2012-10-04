@@ -159,7 +159,7 @@ class Orm
 	*
 	* @return array
 	*/
-	public function getForm()
+	public function getForm($request)
 	{
 		return array();
 	}
@@ -180,7 +180,7 @@ class Orm
 	* @param string $name
 	* @return array
 	*/
-	public function getRules()
+	public function getRules($acl = null)
 	{
 		return array();
 	}
@@ -485,7 +485,7 @@ class Orm
 						
 			if(!($pri == null AND trim($key['Key']) == 'PRI')){
 				$ftype = (strpos($key['Type'], 'text')!==false)? 'textarea' : 'text';
-				$form .= '                    \''.str_replace('_',' ',$key['Field']).'\' => array(\'name\' => \''.$key['Field'].'\', \'type\' => \''.$ftype.'\'), '.PHP_EOL;
+				$form .= '                    \''.str_replace('_',' ',$key['Field']).'\' => array(\'name\' => \''.$key['Field'].'\', \'type\' => \''.$ftype.'\', \'value\'=>$request->post(\''.$key['Field'].'\', $this->'.$key['Field'].')), '.PHP_EOL;
 			
 				$rule='';
 				if(strpos($key['Type'], 'varchar') !== false){ 
@@ -504,7 +504,7 @@ class Orm
 				if(strpos(strtolower($key['Field']), 'url') !== false or strpos(strtolower($key['Field']), 'href') !== false){ 
 					$rule.='\'url\' => \'\', ';
 				}
-				$rules .= '                    \''.$key['Field'].'\' => array('.$rule.'), '.PHP_EOL;
+				$rules .= '                    \''.$key['Field'].'\' => array('.$rule.' \'Required\' => true), '.PHP_EOL;
 			}else{
 				$pri = $key['Field'];	
 			}	
@@ -525,14 +525,14 @@ class Orm
 		$file .= '        protected $_tableKey = \''.$pri.'\';'.PHP_EOL;
 		$file .= '        protected $_structure = array(\''.$struct.'\');'.PHP_EOL;
 		$file .= ''.PHP_EOL;
-		$file .= '        public function getRules()'.PHP_EOL;
+		$file .= '        public function getRules($acl = null)'.PHP_EOL;
 		$file .= '        {'.PHP_EOL;
 		$file .= '                return array('.PHP_EOL;
 		$file .= $rules;
 		$file .= '                );'.PHP_EOL; 
 		$file .= '        }'.PHP_EOL;
 		$file .= ''.PHP_EOL;
-		$file .= '        public function getForm()'.PHP_EOL;
+		$file .= '        public function getForm($request)'.PHP_EOL;
 		$file .= '        {'.PHP_EOL;
 		$file .= '                return array('.PHP_EOL;
 		$file .= $form; 
