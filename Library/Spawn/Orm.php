@@ -504,7 +504,7 @@ class Orm
 				if(strpos(strtolower($key['Field']), 'url') !== false or strpos(strtolower($key['Field']), 'href') !== false){ 
 					$rule.='\'url\' => \'\', ';
 				}
-				$rules .= '                    \''.$key['Field'].'\' => array('.$rule.' \'Required\' => true), '.PHP_EOL;
+				$rules .= '                    \''.$key['Field'].'\' => array('.$rule.' \'required\' => true), '.PHP_EOL;
 			}else{
 				$pri = $key['Field'];	
 			}	
