@@ -584,7 +584,7 @@ class Form
 				case 'select': 
 					$val = Arr::update($val, array( 'name', 'params', 'selected'), '');
 					if(!isset($val['option']) OR !is_array($val['option'])) $val['option']=array();
-					$inp = $this -> select($val['name'], $val['params'], $val['option'], $val['selected']);
+					$inp = $this -> select($val['name'], $val['params'], $val['selected'], $val['option']);
 				break;
 				
 				case 'datalist': 
