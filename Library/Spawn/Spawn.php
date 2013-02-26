@@ -46,6 +46,7 @@ final class Spawn
          */
 	public function init()
 	{
+		ob_start();
 		try{
 		    $this -> event  = new Event;
 			$this -> bootstrap();
@@ -88,7 +89,8 @@ final class Spawn
 						
 		}catch(\Exception $error) {
 			$this -> event  -> run('Spawn.Exception') -> delete('Spawn.Exception');
-						
+			$buff = ob_get_contents();
+			ob_end_clean();			
 			include_once(ROOT_PATH . 'Application'. DIRECTORY_SEPARATOR .'View'. DIRECTORY_SEPARATOR .'Error'. DIRECTORY_SEPARATOR .'exception.phtml');	
 		}
 	}
@@ -104,6 +106,8 @@ final class Spawn
 	*/
 	public static function error404()
 	{
+		$buff = ob_get_contents();
+		ob_end_clean();
 		$event = new Event;
 		$event  -> run('Spawn.404') -> delete('Spawn.404');
 		$error = new \Controller\Error();
@@ -122,7 +126,7 @@ final class Spawn
    		}
                 if( class_exists('Log') ){
 				Log::add($message.' File: '.$filename.' Line: '.$lineno);
-		}
+		}		
 		throw new \ErrorException($message, 0, $severity, $filename, $lineno);
 	} 
 	
