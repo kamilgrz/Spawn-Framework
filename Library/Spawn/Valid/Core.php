@@ -49,14 +49,21 @@ class Core
 				'simile' => function($str, $str2) {
 	                    return ( $str === $str2 );
 	                },   
-				'in' => function($val, array $arr) {
-	                    return ( in_array($val, $arr) );
+			'in' => function($val, array $arr) {
+                            if(!is_array($val)){
+                                return ( in_array($val, $arr) );
+                            }
+                            foreach($val as $key){
+                                if( in_array($key, $arr) ){
+                                    return true;
+                                }
+                            }
+                            return false;
 	                }, 
 				'captcha' => function($val, $name = 'default') {
 	                    $captcha = new \Spawn\Captcha();
 						if($captcha->isDeclared($name)){
-							$x= $captcha->isValid($val, $name);
-							echo (int)$x;
+							$x= $captcha->isValid($val, $name);						
 							return $x;
 						}
 						return false;

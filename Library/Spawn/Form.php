@@ -236,6 +236,22 @@ class Form
 	}
 	
 	/**
+	* create array to radioList/chceckboxList
+	* @param array $model Orm->findAll() 
+	* @param string $key Id
+	* @param string $val Name
+	* @return string
+	*/
+	public function toList($model, $key = 'Id', $val = 'Name')
+	{
+		$arr = array();
+		foreach($model as $row){
+			$arr[$row->$key] = ($val != false)? $row->$val : $row->$key;
+		}
+		return $arr;
+	}
+	
+	/**
 	* create checkbox list
 	* @param array $values self::radio values 
 	* @param string $sep
