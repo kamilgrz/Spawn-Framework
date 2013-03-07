@@ -25,7 +25,7 @@ class Template extends \Spawn\Controller
 	* false or 'content' View object
 	* @var bool/object
 	*/
-	public $content = false;
+	public $content = true;
 
         /**
          * true if \Spawn\View\Tpl

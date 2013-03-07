@@ -240,7 +240,7 @@ class Form
 	* @param array $model Orm->findAll() 
 	* @param string $key Id
 	* @param string $val Name
-	* @return string
+	* @return array
 	*/
 	public function toList($model, $key = 'Id', $val = 'Name')
 	{
