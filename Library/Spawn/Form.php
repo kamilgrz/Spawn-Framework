@@ -633,7 +633,7 @@ class Form
 					$inp = $this -> radioList($val['name'], $val['values'], $val['checked'], $val['sep']);
 				break;
 				case 'file':
-					$val = Arr::update($val, array('css'), '');
+					$val = Arr::update($val, array('css', 'params'), '');
 					$inp = $this -> file($val['name'], $val['params']);
 				break;
 				case 'other':

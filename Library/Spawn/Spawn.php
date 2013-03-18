@@ -69,6 +69,8 @@ final class Spawn
 			    $uri -> setParam(0, $uri->param(0, $this -> controller) ) -> setParam(1, $uri->param(1, $this -> action ) );			    
 			}				
 			
+			$controller = str_replace(' ', '\\',ucwords(str_replace('-', ' ', $controller)));
+			
 			if( ! method_exists($controller, $action) ){			
 			   self::error404();
 			}	

@@ -74,12 +74,13 @@ class View
 	public function __Construct($name = null, $type = '.phtml')
 	{
 	    $this -> _name = $name;
-	    if(null == $this -> _name){
+	     if(null == $this -> _name){
 	        $uri = new Request\Uri;
+	        $controller = str_replace(' ', '\\',ucwords(str_replace('-', ' ', $uri -> param(0))));
 		    $this -> _name = str_replace( 
-					'_', 
+					array('_', '-', '\\'), 
 					DIRECTORY_SEPARATOR,
-					ucfirst($uri -> param(0)) . DIRECTORY_SEPARATOR . $uri -> param(1)
+					ucfirst($controller) . DIRECTORY_SEPARATOR . $uri -> param(1)
 				);
 		}	
 		

@@ -100,8 +100,8 @@ class DataGrid
 			$pri = $data->{$this->getPrimary()};
 			foreach($info as $key){				
 				if( !is_array($key) ){
-					$row[] = $data->{$key};
-				}elseif( is_callable($key[1]) ){
+					$row[] = \Spawn\Filter::xss($data->{$key});
+				}elseif( isset($key[1]) && is_callable($key[1]) ){
 					$row[] = $key[1]($data->{$key[0]});
 				}else{
 					$str = '';
@@ -153,8 +153,8 @@ class DataGrid
 	*/
 	public function getUrl()
 	{
-		if($this->_url==null){
-			$this->_url= \Spawn\Url::base();
+		if($this->_url == null){
+			$this->_url = \Spawn\Url::base();
 		}
 		return $this->_url;
 	}
@@ -162,9 +162,9 @@ class DataGrid
 	/**
 	* @return string
 	*/
-	public function render()
+	public function render($class = 'DGTable')
 	{
-		$str = '<table class="DGTable">';
+		$str = '<table class="'.$class.'">';
 		$str .= $this -> _str;
 		$str .= '</table>';
 		return $str;
