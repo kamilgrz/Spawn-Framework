@@ -59,14 +59,20 @@ class DataGrid
 	*/
 	public $table;
 	
-	
+	/**
+	* row to render
+	*
+	* @var object
+	*/
+	public $row;
+		
 	
 	/**
      * add default row actions - [view, update, delete]
      */
 	public function __construct()
 	{		
-		$this->_action['view'] = function($act, $id){ return '<a href="'.$act.'?view='.$id.'" class="view">View</a>'; };	
+		$this->_action['view'] = function($act, $id) { return '<a href="'.$act.'?view='.$id.'" class="view">View</a>'; };	
 		$this->_action['update'] = function($act, $id){ return '<a href="'.$act.'?update='.$id.'" class="update">Edit</a>'; };	
 		$this->_action['delete'] = function($act, $id){ return '<a href="'.$act.'?delete='.$id.'" class="delete">Delete</a>'; };
 		$this->table = new Table();
@@ -96,6 +102,7 @@ class DataGrid
 		$pri=null;
 		$i=0;
 		foreach($values as $data){
+			$this->row = $data;
 			$row = array();
 			$pri = $data->{$this->getPrimary()};
 			foreach($info as $key){				

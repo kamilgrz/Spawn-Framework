@@ -54,10 +54,10 @@ class Pager
 		$this -> cfg['pages'] = ceil($this -> cfg['total'] / $this -> cfg['limit']);
 		if($this -> cfg['type'] == 'get'){
 		    $req = new Request;
-		    $this -> cfg['page'] = $req -> get($this -> cfg['name'], 0);
+		    $this -> cfg['page'] = (int) $req -> get($this -> cfg['name'], 0);
 		}else{
 		    $uri = new Request\Uri;
-		    $this -> cfg['page'] = $uri -> param($this -> cfg['name'], 0);
+		    $this -> cfg['page'] = (int) $uri -> param($this -> cfg['name'], 0);
 		}		
 		$this -> cfg['back'] = ($this -> cfg['page'] > 0)? true : false;
 		$this -> cfg['next'] = ( $this -> cfg['page'] + 1 < $this -> cfg['pages'])? true : false;			
