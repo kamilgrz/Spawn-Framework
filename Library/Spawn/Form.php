@@ -5,7 +5,7 @@
 * Class to create form html tags
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2012 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Form
 */
@@ -36,12 +36,12 @@ class Form
 	/**
 	* @var string 
 	*/
-	protected $_rowData = '<div class="FormRow"><label>{Label}</label> {Input} <span>{About}</span></div>';
+	protected $_rowData = '<div class="FormRow"><div><label>{Label}<span>{Required}</span></label> {Input}</div> <div class="about">{About}</div></div>';
 	
 	/**
 	* @var string
 	*/ 
-	protected $_rowDataError = '<div class="FormRow FormRowError"><label>{Label}</label> {Input} <span>{About}</span></div>';
+	protected $_rowDataError = '<div class="FormRow FormRowError"><div><label>{Label}<span>{Required}</span></label> {Input}</div> <div class="about">{About}</div></div>';
 	
 	/**
 	* open form tag 
@@ -468,12 +468,12 @@ class Form
 	* @param bool $error
 	* @return string
 	*/ 
-	public function row($label, $input, $about = '', $error = false)
+	public function row($label, $input, $about = '', $required = '',$error = false)
 	{
 		$rowData = (true == $error)? $this -> _rowDataError : $this -> _rowData;
 		$row = str_replace(
-			array('{Label}','{Input}','{About}'), 
-			array($label, $input, $about),
+			array('{Label}','{Input}','{About}','{Required}'), 
+			array($label, $input, $about, $required),
 			$rowData
 			) . PHP_EOL;
 		
@@ -534,17 +534,33 @@ class Form
 	/**
 	* get input names to error raw
 	*
-	* @param string|array $name
+	* @param array $name
 	*/ 
 	public function toError($name)
 	{
-		if(is_array($name)){
-			foreach($name as $key){
-				$this -> _toErrorArray[] = $key;
-			}
-		}else{
-			$this -> toErrorArray[] = $name;
+		foreach($name as $key){
+			$this->_toErrorArray[] = $key;
 		}
+		return $this;
+	}
+	
+	/**
+	* create error message
+	*
+	* @param string $lang PL
+	* @param string $class ul class
+	* @return string
+	*/
+	public function getErrorMessage($lang = 'PL', $class = 'error')
+	{
+		$data = new \Spawn\Data('FormError');
+		$dataList = $data->get($lang);
+		$str = '<ul class="'.$class.'">';
+		foreach($this->_toErrorArray as $key){
+			$str .= '<li>'.$dataList[$key].'</li>';
+		}		
+		$str .= '</ul>';
+		return $str;
 	}
 	
 	/**
@@ -644,7 +660,8 @@ class Form
 			if(isset($val['name']) AND in_array($val['name'], $this -> _toErrorArray)) $val['error'] = true;
 			
 			//create input
-			$form .= ( !in_array($val['type'], array('hidden', 'datalist') ) )? $this -> row( $key, $inp, $val['about'] , $val['error']) : $inp;
+			$req = in_array('required', $val)? '*' : '';
+			$form .= ( !in_array($val['type'], array('hidden', 'datalist') ) )? $this -> row( $key, $inp, $val['about'] , $req, $val['error']) : $inp;
 		}
 		return $form;
 	}	

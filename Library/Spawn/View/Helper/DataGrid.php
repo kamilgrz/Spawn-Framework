@@ -5,7 +5,7 @@
 * DataGrid
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2012 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Helper
 */
@@ -72,9 +72,9 @@ class DataGrid
      */
 	public function __construct()
 	{		
-		$this->_action['view'] = function($act, $id) { return '<a href="'.$act.'?view='.$id.'" class="view">View</a>'; };	
-		$this->_action['update'] = function($act, $id){ return '<a href="'.$act.'?update='.$id.'" class="update">Edit</a>'; };	
-		$this->_action['delete'] = function($act, $id){ return '<a href="'.$act.'?delete='.$id.'" class="delete">Delete</a>'; };
+		$this->_action['view'] = function($act, $id) { return '<a href="'.$act.'/view/'.$id.'" class="view">View</a>'; };	
+		$this->_action['edit'] = function($act, $id) { return '<a href="'.$act.'/edit/'.$id.'" class="edit">Edit</a>'; };	
+		$this->_action['delete'] = function($act, $id) { return '<a href="'.$act.'/delete/'.$id.'" class="delete">Delete</a>'; };
 		$this->table = new Table();
 	}
 	
@@ -161,7 +161,8 @@ class DataGrid
 	public function getUrl()
 	{
 		if($this->_url == null){
-			$this->_url = \Spawn\Url::base();
+			$uri = new \Spawn\Request\Uri;
+			$this->_url = \Spawn\Config::Load('Uri') -> get('base').$uri->param(0);
 		}
 		return $this->_url;
 	}
@@ -187,4 +188,9 @@ class DataGrid
 		$this->_action[$name] = $value;
 		return $this;
 	}	
+	
+	public function __toString()
+	{
+		return $this->render();
+	}
 }
