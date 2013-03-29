@@ -59,11 +59,12 @@ final class Spawn
 			
 			$uri = new Request\Uri();
 			$uri -> initPath() -> initArgs();
-			$controller ='\Controller\\'.ucfirst($uri->param(0, $this -> controller) );	
+			$controller_core = $uri->param(0, $this -> controller);
+			$controller = '\Controller\\' .str_replace(' ', '\\',ucwords(str_replace(self::$controllerSeparator, ' ', $controller_core)));
 			$action     = $uri->param(1, $this -> action ).'Action';
-			$controller = str_replace(' ', '\\',ucwords(str_replace(self::$controllerSeparator, ' ', $controller)));
 			
-			if( ! method_exists($controller, $action) ){	
+			if( ! method_exists($controller, $action) ){
+				$controller_core = $controller_core . self::$controllerSeparator . $this->controller;
 				$controller = $controller.'\\'.$this->controller;
 			}	
 			
@@ -71,9 +72,9 @@ final class Spawn
 			    $this -> router -> init( $uri );		
 			    $uri = $this -> router -> getUri();	
 			    $controller = '\Controller\\' . str_replace(' ', '\\', ucwords(str_replace(self::$controllerSeparator, ' ',  $this -> router -> getController())));				
-			    $action     = $this -> router -> getAction() . 'Action';		
+			    $action = $this -> router -> getAction() . 'Action';		
 			}else{
-			    $uri -> setParam(0, $uri->param(0, $this -> controller) ) -> setParam(1, $uri->param(1, $this -> action ) );			    
+			    $uri -> setParam(0, $controller_core ) -> setParam(1, $uri->param(1, $this -> action ) );			    
 			}				
 						
 			if( ! method_exists($controller, $action) ){			
