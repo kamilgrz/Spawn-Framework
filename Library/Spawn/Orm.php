@@ -136,11 +136,15 @@ class Orm
 	* set find data (data to save())
 	*
 	* @param array
+	* @param bool $secure unset primary key from array
 	* @return self
 	*/
-	public function setData(array $data)
+	public function setData(array $data, $secure = true)
 	{
 		$this -> _find = $data;
+		if(isset($this->_find[$this->_tableKey])){
+			unset($this->_find[$this->_tableKey]);
+		}
 		return $this;
 	}
 	
