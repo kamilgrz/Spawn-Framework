@@ -33,6 +33,9 @@ final class Spawn
      */
     public $controller;
     
+    /*
+    * @var string
+    */
     public static $controllerSeparator = '-';
 
     /**

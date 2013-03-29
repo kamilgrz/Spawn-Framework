@@ -142,7 +142,7 @@ class Orm
 	public function setData(array $data, $secure = true)
 	{
 		$this -> _find = $data;
-		if(isset($this->_find[$this->_tableKey])){
+		if($secure == true && isset($this->_find[$this->_tableKey])){
 			unset($this->_find[$this->_tableKey]);
 		}
 		return $this;
