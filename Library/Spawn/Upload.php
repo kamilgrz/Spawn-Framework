@@ -123,6 +123,18 @@ class Upload
 	}
 	
 	/**
+	* new file name
+	*
+    * @param string $name
+    * @return self
+    */ 
+	public function setNewName($name)
+	{
+		$this->_newName = $name;
+		return $this;
+	}
+	
+	/**
 	*use sf_image method if sf_upload havent 
 	*
 	*@param string $method

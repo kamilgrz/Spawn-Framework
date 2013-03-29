@@ -32,6 +32,8 @@ final class Spawn
      * @var string
      */
     public $controller;
+    
+    public static $controllerSeparator = '-';
 
     /**
      * load bootstrap.php
@@ -59,18 +61,21 @@ final class Spawn
 			$uri -> initPath() -> initArgs();
 			$controller ='\Controller\\'.ucfirst($uri->param(0, $this -> controller) );	
 			$action     = $uri->param(1, $this -> action ).'Action';
+			$controller = str_replace(' ', '\\',ucwords(str_replace(self::$controllerSeparator, ' ', $controller)));
 			
-			if( ! method_exists($controller, $action ) ){
+			if( ! method_exists($controller, $action) ){	
+				$controller = $controller.'\\'.$this->controller;
+			}	
+			
+			if( ! method_exists($controller, $action ) ){				
 			    $this -> router -> init( $uri );		
 			    $uri = $this -> router -> getUri();	
-			    $controller = '\Controller\\' . ucwords( $this -> router -> getController() );				
+			    $controller = '\Controller\\' . str_replace(' ', '\\', ucwords(str_replace(self::$controllerSeparator, ' ',  $this -> router -> getController())));				
 			    $action     = $this -> router -> getAction() . 'Action';		
 			}else{
 			    $uri -> setParam(0, $uri->param(0, $this -> controller) ) -> setParam(1, $uri->param(1, $this -> action ) );			    
 			}				
-			
-			$controller = str_replace(' ', '\\',ucwords(str_replace('-', ' ', $controller)));
-			
+						
 			if( ! method_exists($controller, $action) ){			
 			   self::error404();
 			}	

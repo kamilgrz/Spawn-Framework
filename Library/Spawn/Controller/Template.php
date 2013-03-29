@@ -94,3 +94,4 @@ class Template extends \Spawn\Controller
 		echo $this -> view -> render();
 	}		
 }
+
