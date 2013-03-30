@@ -5,7 +5,7 @@
 * Request
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2012 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Request
 */
@@ -24,9 +24,12 @@ class Request
          * @param string $or
          * @return string
          */
-	public function get($pr, $or = null)
+	public function get($pr = false, $or = null)
 	{
 		if($_GET){			
+			if($pr == false){
+				return $this->_filterUTF8($_GET);
+			}	
 			$par = ( isset($_GET[ $pr ]) )? $this->_filterUTF8($_GET[ $pr ]) : $or;			
 		}else{
 			$par = $or;
@@ -44,8 +47,14 @@ class Request
 			$par = Filter::utf8($data);
 		}else{
 			$par = array();
-			foreach($data as $key){
-				$par[] = $this->_filterUTF8($key);
+			if(Arr::IsAssoc($data)){
+				foreach($data as $key => $val){
+					$par[$key] = $this->_filterUTF8($val);
+				}
+			}else{
+				foreach($data as $key){
+					$par[] = $this->_filterUTF8($key);
+				}
 			}
 		}
 		return $par;
@@ -57,15 +66,19 @@ class Request
          * @param string $or
          * @return string
          */
-	public function post($pr, $or = null)
+	public function post($pr = false, $or = null)
 	{
-		if($_POST){			
+		if($_POST){		
+			if($pr == false){
+				return $this->_filterUTF8($_POST);
+			}	
 			$par = ( isset($_POST[ $pr ]) )? $this->_filterUTF8($_POST[ $pr ]) : $or;
 		}else{
 			$par = $or;
 		}	
 		return $par;
 	}
+	
 	
 	/**
 	* get $_FILES param 
