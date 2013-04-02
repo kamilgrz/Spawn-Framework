@@ -107,7 +107,7 @@ class Auth
 			 -> from($this -> _config['table'])
 			 -> where( array( 
 				$this -> _config['name'] => $name,
-				$this -> _config['password'] => md5($pass.$this -> _config['salt'])
+				$this -> _config['password'] => $this -> hashPass($pass) 
 				 ) )
 			 -> find();
 			 
@@ -187,7 +187,7 @@ class Auth
 	{
 	    $id = (null != $id)? $id : $this -> _session -> get($this -> _config['prefix'].'SfAuthId');
 		return  $this -> _db -> update($this -> _config['table'],
-					array($this -> _config['password'] => md5($pass . $this -> _config['salt']) ),
+					array($this -> _config['password'] => $this -> hashPass($pass) ),
 					array($this -> _config['id'] => $id)
 				);
 	}
@@ -239,7 +239,7 @@ class Auth
 		foreach($this -> _config['toAdd'] as $key => $val){
                         $args[ $key ] = (isset($args[ $key ]))? $args[ $key ]: null;
 			$toAdd[ $val ] = ($val != $this -> _config['password'])?
-				 $args[ $key ] : md5($args[ $key ] . $this -> _config['salt']) ;
+				 $args[ $key ] : $this -> hashPass($args[ $key ]);
 		}
 		
 		return $this -> _db -> insert($this -> _config['table'], $toAdd);
@@ -275,6 +275,17 @@ class Auth
 				$this -> _config['table'],
 				array($this -> _config['id'] => $id)
 			);
+	}
+	
+	/**
+	* create password hash
+	*
+	* @param string $pass
+	* @return string
+	*/
+	public function hashPass($pass)
+	{
+		return md5($pass.$this -> _config['salt']);
 	}
 
 }//auth
