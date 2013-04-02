@@ -5,8 +5,9 @@
 * Class to user authorisation
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2011 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
+* @package Auth
 */
 namespace Spawn;
 
@@ -32,12 +33,16 @@ class Auth
     * @var array|bool
     */
     protected $_data = false;
-	
-		
+    
+    /**
+    * @var \Auth\Remember
+    */
+    public $remember;
+    			
 	/**
 	* load auth config
 	*/
-	public function __construct( $session = null , \Spawn\Db $db = null)
+	public function __construct( $session = null , Db $db = null)
 	{
 	    $config = new Config('Auth');
 		$this -> _config = $config -> getAll();
@@ -45,14 +50,20 @@ class Auth
 		
 		$this -> _db = (null == $db)? new Db() : $db;
 		$this -> _session = (null == $session)? Session::load() : $session;
+		
+		$this->remember = new Auth\Remember($this -> _session -> get($this -> _config['prefix'].'SfAuthId', 0));		
+		if(!$this->isValid() && $this->remember->isRemembered()){		
+			$this ->_session->set($this->_config['prefix'].'SfAuthId', $this->remember->getId());
+		}
 	}
+	
 	
 	/**	
 	* check whether the array is logged	
 	*
 	* @return bool
 	*/
-	public function valid()
+	public function isValid()
 	{
 		if($this -> _session -> get($this -> _config['prefix'].'SfAuthId', 0) == 0){
 			return false;
@@ -65,9 +76,21 @@ class Auth
 	*
 	* @return integer
 	*/
-	public function id()
+	public function getId()
 	{
 		return $this -> _session -> get($this -> _config['prefix'].'SfAuthId');
+	}
+	
+	/**
+	* auth id
+	* 
+	* @param integer $id user id
+	* @return self
+	*/
+	public function setId($id)
+	{
+		$this -> _session -> set($this -> _config['prefix'].'SfAuthId', $id);	
+		return $this;
 	}
 	
 	/**
@@ -84,14 +107,28 @@ class Auth
 			 -> from($this -> _config['table'])
 			 -> where( array( 
 				$this -> _config['name'] => $name,
-				$this -> _config['password'] => $this -> hashPass($pass))
+				$this -> _config['password'] => md5($pass.$this -> _config['salt'])
 				 ) )
 			 -> find();
+			 
 		if($user == false){
 			return false;
 		}	
-		$this -> _session -> set($this -> _config['prefix'].'SfAuthId', $user -> {$this -> _config['id']});
+		
+		$this->setId($user -> {$this -> _config['id']});		
+		
 		return $user -> {$this -> _config['id']};
+	}
+	
+	/**
+	* use \Auth\Remember to remember user id
+	*
+	* @return self
+	*/
+	public function remember()
+	{
+		$this->remember->remember($this->getId());
+		return $this;
 	}
 	
 	/**
@@ -102,6 +139,9 @@ class Auth
 	public function logout()
 	{
 		$this -> _session -> delete($this -> _config['prefix'].'SfAuthId');
+		
+		$this->remember->forget();
+		
 		return $this;
 	}
 	
@@ -147,7 +187,7 @@ class Auth
 	{
 	    $id = (null != $id)? $id : $this -> _session -> get($this -> _config['prefix'].'SfAuthId');
 		return  $this -> _db -> update($this -> _config['table'],
-					array($this -> _config['password'] => $this -> hashPass($pass) ),
+					array($this -> _config['password'] => md5($pass . $this -> _config['salt']) ),
 					array($this -> _config['id'] => $id)
 				);
 	}
@@ -199,7 +239,7 @@ class Auth
 		foreach($this -> _config['toAdd'] as $key => $val){
                         $args[ $key ] = (isset($args[ $key ]))? $args[ $key ]: null;
 			$toAdd[ $val ] = ($val != $this -> _config['password'])?
-				 $args[ $key ] : $this -> hashPass($args[ $key ]) ;
+				 $args[ $key ] : md5($args[ $key ] . $this -> _config['salt']) ;
 		}
 		
 		return $this -> _db -> insert($this -> _config['table'], $toAdd);
@@ -235,17 +275,6 @@ class Auth
 				$this -> _config['table'],
 				array($this -> _config['id'] => $id)
 			);
-	}
-
-	/**
-	* create password hash
-	*
-	* @param string $pass
-	* @return string
-	*/
-	public function hashPass($pass)
-	{
-		return md5($pass.$this -> _config['salt']);
 	}
 
 }//auth

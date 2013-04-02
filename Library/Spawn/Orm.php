@@ -5,7 +5,7 @@
 * Math
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2011 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Db
 */
@@ -49,6 +49,11 @@ class Orm
 	* @var array
 	*/
 	protected $_validError = array();
+	
+	/**
+	* @var integer|string
+	*/
+	protected $_event = 0;
 	
 	/* MAGIC METHODS  */
 	
@@ -157,6 +162,27 @@ class Orm
 	{
 		return $this -> _find;
 	}
+	
+	/**
+	* set event name 
+	*
+	* @return self
+	*/
+	public function setEvent($name)
+	{
+		$this->_event = $name;
+		return $this;
+	}
+	
+	/**
+	* get event name (use in getFrom/getRules)
+	*
+	* @return integer|string
+	*/
+	public function getEvent()
+	{
+		return $this->_event;
+	}	
 	
 	/**
 	* get form structure

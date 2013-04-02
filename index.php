@@ -10,7 +10,7 @@ error_reporting(E_ALL|E_STRICT);
 
 date_default_timezone_set('Europe/Warsaw');
 
-define('SPAWNM','2.1.9');
+define('SPAWNM','2.2.0');
 define('ROOT_PATH', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
 
 include_once(ROOT_PATH . 'Library/Spawn/Loader.php');
