@@ -1,0 +1,14 @@
+<nav class="menu">
+<ul>
+<?php
+foreach($rows as $key => $val){
+	$class='';
+	if(preg_match('#^'.$key.'#i',$uri)){
+		$class='active';
+	}
+	echo '<li><a href="'.$val['href'].'" title="'.$val['title'].'" class="'.$class.'">'.$val['name'].'</a></li>';
+}
+?>
+</ul>
+</nav>
+
