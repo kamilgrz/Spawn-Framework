@@ -72,9 +72,9 @@ class DataGrid
      */
 	public function __construct()
 	{		
-		$this->_action['view'] = function($act, $id) { return '<a href="'.$act.'/view/'.$id.'" class="view">View</a>'; };	
-		$this->_action['edit'] = function($act, $id) { return '<a href="'.$act.'/edit/'.$id.'" class="edit">Edit</a>'; };	
-		$this->_action['delete'] = function($act, $id) { return '<a href="'.$act.'/delete/'.$id.'" class="delete">Delete</a>'; };
+		$this->_action['view'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/view/'.$id).'" class="view">View</a>'; };	
+		$this->_action['edit'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/edit/'.$id).'" class="edit">Edit</a>'; };	
+		$this->_action['delete'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/delete/'.$id).'" class="delete">Delete</a>'; };
 		$this->table = new Table();
 	}
 	
@@ -160,7 +160,7 @@ class DataGrid
 	*/
 	public function getUrl()
 	{
-		if($this->_url == null){
+		if(null == $this->_url){
 			$uri = new \Spawn\Request\Uri;
 			$this->_url = \Spawn\Config::Load('Uri') -> get('base').$uri->param(0);
 		}

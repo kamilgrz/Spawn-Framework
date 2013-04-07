@@ -55,6 +55,8 @@ class Orm
 	*/
 	protected $_event = 0;
 	
+	protected $_request;
+	
 	/* MAGIC METHODS  */
 	
 	
@@ -138,6 +140,27 @@ class Orm
 	}
 	
 	/**
+	* @param object $req
+	* @return self
+	*/
+	public function setRequest(\Spawn\Request $req)
+	{
+		$this->_request = $req;
+		return $this;
+	}
+	
+	/**
+	* @return \Spawn\Request
+	*/
+	public function getRequest()
+	{
+		if(null == $this->_request){
+			$this->_request = new \Spawn\Request();
+		}
+		return $this->_request;
+	}
+	
+	/**
 	* set find data (data to save())
 	*
 	* @param array
@@ -189,9 +212,17 @@ class Orm
 	*
 	* @return array
 	*/
-	public function getForm($request)
+	public function getForm()
 	{
 		return array();
+	}
+	
+	/**
+	* @return self
+	*/
+	public function search()
+	{
+		return $this;
 	}
 	
 	/**
@@ -508,14 +539,16 @@ class Orm
 		$struct = array();
 		$pri = null;
 		
-		$rules='';
-		$form='';
+		$rules = '';
+		$form = '';
+		$search = '';
 		foreach($structTable as $key){
+			$search .= '        if($request->post(\''.$key['Field'].'\')) $this->_db->where(\'`'.$name.'`.`'.$key['Field'].'` LIKE\', \'%\'.$request->post(\''.$key['Field'].'\').\'%\');'.PHP_EOL;
 			$struct[] = $key['Field'];			
 						
 			if(!($pri == null AND trim($key['Key']) == 'PRI')){
 				$ftype = (strpos($key['Type'], 'text')!==false)? 'textarea' : 'text';
-				$form .= '                    \''.str_replace('_',' ',$key['Field']).'\' => array(\'name\' => \''.$key['Field'].'\', \'type\' => \''.$ftype.'\', \'value\'=>$request->post(\''.$key['Field'].'\', $this->'.$key['Field'].')), '.PHP_EOL;
+				$form .= '            \''.str_replace('_',' ',$key['Field']).'\' => array(\'name\' => \''.$key['Field'].'\', \'type\' => \''.$ftype.'\', \'value\'=>$request->post(\''.$key['Field'].'\', $this->'.$key['Field'].')), '.PHP_EOL;
 			
 				$rule='';
 				if(strpos($key['Type'], 'varchar') !== false){ 
@@ -534,7 +567,7 @@ class Orm
 				if(strpos(strtolower($key['Field']), 'url') !== false or strpos(strtolower($key['Field']), 'href') !== false){ 
 					$rule.='\'url\' => \'\', ';
 				}
-				$rules .= '                    \''.$key['Field'].'\' => array('.$rule.' \'required\' => true), '.PHP_EOL;
+				$rules .= '            \''.$key['Field'].'\' => array('.$rule.' \'required\' => true), '.PHP_EOL;
 			}else{
 				$pri = $key['Field'];	
 			}	
@@ -551,23 +584,40 @@ class Orm
 		$file .= 'namespace Model\Orm'.$cSpace.';'.PHP_EOL;
 		$file .= 'class '.$cName.' extends \Spawn\Orm'.PHP_EOL;
 		$file .= '{'.PHP_EOL;
-		$file .= '        protected $_tableName = \''.$name.'\';'.PHP_EOL;
-		$file .= '        protected $_tableKey = \''.$pri.'\';'.PHP_EOL;
-		$file .= '        protected $_structure = array(\''.$struct.'\');'.PHP_EOL;
+		$file .= '    protected $_tableName = \''.$name.'\';'.PHP_EOL;
+		$file .= '    protected $_tableKey = \''.$pri.'\';'.PHP_EOL;
+		$file .= '    protected $_structure = array(\''.$struct.'\');'.PHP_EOL;
 		$file .= ''.PHP_EOL;
-		$file .= '        public function getRules($acl = null)'.PHP_EOL;
-		$file .= '        {'.PHP_EOL;
-		$file .= '                return array('.PHP_EOL;
+		$file .= '    public function getRules($acl = null)'.PHP_EOL;
+		$file .= '    {'.PHP_EOL;
+		$file .= '        return array('.PHP_EOL;
 		$file .= $rules;
-		$file .= '                );'.PHP_EOL; 
-		$file .= '        }'.PHP_EOL;
+		$file .= '        );'.PHP_EOL; 
+		$file .= '    }'.PHP_EOL;
 		$file .= ''.PHP_EOL;
-		$file .= '        public function getForm($request)'.PHP_EOL;
-		$file .= '        {'.PHP_EOL;
-		$file .= '                return array('.PHP_EOL;
+		$file .= '    public function getForm()'.PHP_EOL;
+		$file .= '    {'.PHP_EOL;
+		$file .= '        $request = $this->getRequest();'.PHP_EOL;
+		$file .= '        return array('.PHP_EOL;
 		$file .= $form; 
-		$file .= '                );'.PHP_EOL; 
-		$file .= '        }'.PHP_EOL;
+		$file .= '        );'.PHP_EOL; 
+		$file .= '    }'.PHP_EOL;
+		$file .= ''.PHP_EOL;
+		$file .= '    public function search()'.PHP_EOL;
+		$file .= '    {'.PHP_EOL;
+		$file .= '        $request = $this->getRequest();'.PHP_EOL;
+		$file .= $search; 
+		$file .= '        return $this;'.PHP_EOL;
+		$file .= '    }'.PHP_EOL;
+		$file .= ''.PHP_EOL;
+		$file .= '    public function getDataGrid($fromRecord = null, $countRecord = null)'.PHP_EOL;
+		$file .= '    {'.PHP_EOL;
+		$file .= '        $dataList = $this->findAll($fromRecord, $countRecord);'.PHP_EOL;
+		$file .= '        $dataGrid = new \Spawn\View\Helper\DataGrid();'.PHP_EOL;
+		$file .= '        $dataGrid->top(array(\''.$struct.'\', \'Options\'));'.PHP_EOL;
+		$file .= '        $dataGrid->rows($dataList, array(\''.$struct.'\', array(\'view\', \'edit\', \'delete\')));'.PHP_EOL;
+		$file .= '        return $dataGrid;'.PHP_EOL;
+		$file .= '    }'.PHP_EOL;
 		$file .= '}';
 		
 		//create orm file
