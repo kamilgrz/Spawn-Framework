@@ -657,7 +657,7 @@ class Form
 				break;
 			}
 			$val = Arr::update($val, array('error', 'about'), '');
-			if(isset($val['name']) AND in_array($val['name'], $this -> _toErrorArray)) $val['error'] = true;
+			if(isset($val['name']) AND in_array($val['name'], $this -> _toErrorArray)) $val['error'] = 1;
 			
 			//create input
 			$req = in_array('required', $val)? '*' : '';
