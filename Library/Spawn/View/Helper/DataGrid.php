@@ -72,9 +72,9 @@ class DataGrid
      */
 	public function __construct()
 	{		
-		$this->_action['view'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/view/'.$id).'" class="view">View</a>'; };	
-		$this->_action['edit'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/edit/'.$id).'" class="edit">Edit</a>'; };	
-		$this->_action['delete'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/delete/'.$id).'" class="delete">Delete</a>'; };
+		$this->_action['view'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/view/'.$id).'" class="view btn btn-link">View</a>'; };	
+		$this->_action['edit'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/edit/'.$id).'" class="edit btn btn-link">Edit</a>'; };	
+		$this->_action['delete'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/delete/'.$id).'" class="delete btn btn-link">Delete</a>'; };
 		$this->table = new Table();
 	}
 	
@@ -84,9 +84,13 @@ class DataGrid
      * @param array $top
 	 * @return self
      */
-	public function top(array $top)
+	public function top(array $dataList)
 	{
-		$this->_str = $this->table->row($top, 'class="sfTrTop"');
+		$str = '';
+		foreach($dataList as $key){
+			$str .= '<th>'.$key.'</th>';
+		}
+		$this->_str = '<thead><tr>'.$str.'</tr></thead>'.PHP_EOL;
 		return $this;
 	}
 	
@@ -118,12 +122,16 @@ class DataGrid
 					$row[] = $str;
 				}			
 			}	
-			$trCss = ($i%2 == 1)? 'class="DGTr1"' : 'class="DGTr2"';
-			$rows .= $this->table->row($row, $trCss);
+			$trClass = ($i%2 == 1)? 'tr2' : 'tr1';
+			$str = '';
+			foreach($row as $key){
+				$str .= '<td>'.$key.'</td>';
+			}
+			$rows .= '<tr class="'.$trClass.'">'.$str.'</tr>'.PHP_EOL;
 			$i++;
 		}
 		
-		$this -> _str .= $rows;
+		$this -> _str .= '<tbody>'.$rows.'</tbody>'.PHP_EOL;
 		return $this;
 	}
 	
@@ -170,7 +178,7 @@ class DataGrid
 	/**
 	* @return string
 	*/
-	public function render($class = 'DGTable')
+	public function render($class = 'table')
 	{
 		$str = '<table class="'.$class.'">';
 		$str .= $this -> _str;
