@@ -1,20 +1,23 @@
-<div class="pager">
+<div class="pagination">
+<ul>
 <?php
 if($back==true){
-	echo '<a href="'.str_replace('__PAGE__',($page-1),$href).'">« Back</a> | ';
+	echo '<li><a href="'.str_replace('__PAGE__',($page-1),$href).'">«</a></li>';
 }else{
-	echo '« Back | ';
+	echo '<li class="disabled"><a href="#">«</a></li>';
 }
 
 for($i=0; $i<$pages; $i++){
-	$url=' <a href="'.str_replace('__PAGE__',$i,$href).'">'.($i+1).'</a>';
-	echo ($page==($i))? '<b>'.$url.'</b> |' : $url.' | ';
+	$active =  ($page==($i))? 'class="active"': '';
+	$url='<li '.$active.'><a href="'.str_replace('__PAGE__',$i,$href).'">'.($i+1).'</a></li>';
+	echo $url;
 }
 
 if($next==true){
-	echo ' <a href="'.str_replace('__PAGE__',($page+1),$href).'">Next »</a>';
+	echo '<li><a href="'.str_replace('__PAGE__',($page+1),$href).'">»</a></li>';
 }else{
-	echo ' Next »';
+	echo '<li class="disabled"><a href="#">»</a></li>';
 }
 ?>
+</ul>
 </div>

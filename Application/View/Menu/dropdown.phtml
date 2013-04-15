@@ -1,0 +1,31 @@
+<ul class="nav">
+<?php
+$menu = function($rows, $menu, $submenu) use($uri){
+	$str = '';
+	foreach($rows as $key => $val){
+		if( isset($val[0]) && is_string($val[0]) && isset($val[1]) && \Spawn\Arr::isArray($val[1])){	
+			$submenu = (false == $submenu)? '' : '-submenu';
+			$carret = (false==$submenu)?'<b class="caret"></b>' : '';		
+			$str .=  '<li class="dropdown'.$submenu.'"><a href="#" class="dropdown-toggle" data-toggle="dropdown">'.$val[0].' '.$carret.'</a>
+			<ul class="dropdown-menu">
+				'.$menu($val[1], $menu, true).'
+			</ul>
+			</li>';
+		}elseif($key == 'divider'){
+			$str.= '<li class="divider"></li>';
+		}elseif($key == 'nav-header'){
+			$str.= '<li class="nav-header">'.$val.'</li>';
+		}else{
+			$class='';
+			if(preg_match('#^'.$key.'#i',$uri)){
+				$class='active';
+			}
+			$str .= '<li><a href="'.$val['href'].'" class="'.$class.'">'.$val['name'].'</a></li>';
+		}
+	}
+	return $str;
+};
+echo $menu($rows, $menu, false);
+?>
+</ul>
+
