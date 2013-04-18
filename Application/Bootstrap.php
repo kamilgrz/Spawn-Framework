@@ -7,6 +7,8 @@ $dbc -> register();
 
 /*
 $session = new \Spawn\Session();
-$session -> validSecurity();
+if(!$session -> isSecured()){
+    $session = new \Spawn\Session();
+}
 $session -> register();
 */
