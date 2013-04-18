@@ -36,13 +36,20 @@ class Form
 	/**
 	* @var string 
 	*/
-	protected $_rowData = '<div class="FormRow"><div><label>{Label}<span>{Required}</span></label> {Input}</div> <div class="about">{About}</div></div>';
-	
-	/**
+	protected $_rowData = '<div class="control-group"><label class="control-label">{Label}<sup>{Required}</sup></label><div class="controls">{Input} {About}</div></div>';
+    /**
 	* @var string
 	*/ 
-	protected $_rowDataError = '<div class="FormRow FormRowError"><div><label>{Label}<span>{Required}</span></label> {Input}</div> <div class="about">{About}</div></div>';
-	
+	protected $_rowDataError = '<div class="control-group alert alert-error"><label class="control-label ">{Label}<sup>{Required}</sup></label><div class="controls">{Input} {About}</div></div>';
+    /**
+     * @var string
+     */
+    protected $_boxLabel = '<label class="checkbox">{Data}</label>';
+    /**
+     * @var string
+     */
+    protected $_radioLabel = '<label class="radio">{Data}</label>';
+    
 	/**
 	* open form tag 
 	*
@@ -120,7 +127,7 @@ class Form
 	* @param array $params
 	* @return string
 	*/
-	public function button($name, $value, $params=null)
+	public function button($name, $value, $params = array('class'=>'btn') )
 	{
 		$params = (null != $params)? $this -> _params($params) : '';
 		return '<input type="button" name="'.$name.'" value="'.Filter::xss($value).'" '.$params.'>';
@@ -265,8 +272,9 @@ class Form
 			if($check == $key){
 				$checked = true;
 			}
-			$str .= $this->radio($name, $key, $checked).' '.$val . $sep . PHP_EOL;
-		}		
+            $radio = $this->radio($name, $key, $checked).' '.$val . $sep . PHP_EOL;
+            $str .= str_replace('{Data}', $radio, $this->_radioLabel);
+		}
 		return $str;
 	}
 	
@@ -300,8 +308,10 @@ class Form
 			if(in_array($key, $check)){
 				$checked = true;
 			}
-			$str .= $this->checkbox($name.'[]', $key, $checked).' '.$val . $sep . PHP_EOL;
-		}		
+			$box = $this->checkbox($name.'[]', $key, $checked).' '.$val . $sep . PHP_EOL;
+            $str .= str_replace('{Data}', $box, $this->_boxLabel);
+		}
+
 		return $str;
 	}
 	
@@ -427,7 +437,7 @@ class Form
 	* @param string $name
 	* @return string
 	*/
-	public function submit($value = 'OK', $name = 'submit' , $params = null)
+	public function submit($value = 'OK', $name = 'submit' , $params = array('class'=>'btn btn-primary'))
 	{
 		$params = (null != $params)? $this -> _params($params) : '';
 		return '<input type="submit" name="'.$name.'" value="'.Filter::xss($value).'" '.$params.'>';
@@ -440,7 +450,7 @@ class Form
 	* @param array $params
 	* @return string
 	*/
-	public function reset($value = 'Reset', $params = null)
+	public function reset($value = 'Reset', $params = array('class'=>'btn') )
 	{
 		$params = (null != $params)? $this -> _params($params) : '';
 		return '<input type="reset" name="reset" value="'.Filter::xss($value).'" '.$params.'>';
@@ -455,7 +465,7 @@ class Form
 	*/ 
 	public function close($submit = false, $params = null)
 	{
-		$close = (false == $submit)? '' : $this -> submit($submit, $params);
+		$close = (false == $submit)? '' : $this->row('&nbsp;',$this->submit($submit, $params));
 		$close .= (true == $this -> _field)? '</fieldset></form>' : '</form>';
 		return $close.PHP_EOL;
 	}
@@ -667,3 +677,4 @@ class Form
 	}	
 		
 }//form
+

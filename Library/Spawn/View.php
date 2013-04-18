@@ -76,9 +76,9 @@ class View
 	    $this -> _name = $name;
 	     if(null == $this -> _name){
 	        $uri = new Request\Uri;
-	        $controller = str_replace(' ', '\\',ucwords(str_replace('-', ' ', $uri -> param(0))));
+	        $controller = str_replace(' ', '\\',ucwords(str_replace(Spawn::$controllerSeparator, ' ', $uri -> param(0))));
 		    $this -> _name = str_replace( 
-					array('_', '-', '\\'), 
+					array('_', Spawn::$controllerSeparator, '\\'), 
 					DIRECTORY_SEPARATOR,
 					ucfirst($controller) . DIRECTORY_SEPARATOR . $uri -> param(1)
 				);
