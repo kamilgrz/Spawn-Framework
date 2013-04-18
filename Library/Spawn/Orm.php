@@ -2,7 +2,7 @@
 /**
 * Spawn Framework
 *
-* Math
+* Orm
 *
 * @author  Paweł Makowski
 * @copyright (c) 2010-2013 Paweł Makowski
@@ -55,6 +55,9 @@ class Orm
 	*/
 	protected $_event = 0;
 	
+	/**
+	* @var \Spawn\Request
+	*/ 
 	protected $_request;
 	
 	/* MAGIC METHODS  */
@@ -206,46 +209,7 @@ class Orm
 	{
 		return $this->_event;
 	}	
-	
-	/**
-	* get form structure
-	*
-	* @return array
-	*/
-	public function getForm()
-	{
-		return array();
-	}
-	
-	/**
-	* @return self
-	*/
-	public function search()
-	{
-		return $this;
-	}
-	
-	/**
-	* declare default values to insert/select/update
-	*
-	* @return array
-	*/
-	public function loadDefaultData()
-	{
-	}
-	
-		
-	/**
-	* rules to Valid()->setRules()
-	*
-	* @param string $name
-	* @return array
-	*/
-	public function getRules($acl = null)
-	{
-		return array();
-	}
-		
+			
 	/**
 	*find one record
 	*
@@ -606,6 +570,12 @@ class Orm
 		$file .= '    public function search()'.PHP_EOL;
 		$file .= '    {'.PHP_EOL;
 		$file .= '        $request = $this->getRequest();'.PHP_EOL;
+		$file .= '        $session = \Spawn\Session::load();'.PHP_EOL;
+		$file .= '        if ($_POST) {'.PHP_EOL;
+		$file .= '            $session->set(\'search_'.$name.'\', $request->post());'.PHP_EOL;
+		$file .= '        }else {'.PHP_EOL;
+		$file .= '            $_POST = $session->get(\'search_'.$name.'\');'.PHP_EOL;
+		$file .= '        }'.PHP_EOL;
 		$file .= $search; 
 		$file .= '        return $this;'.PHP_EOL;
 		$file .= '    }'.PHP_EOL;
