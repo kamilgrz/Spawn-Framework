@@ -522,7 +522,7 @@ class Orm
 				if(strpos($key['Type'], 'datetime') !== false or strpos($key['Type'], 'timestamp') !== false){ 
 					$rule.='\'regex\' => \'/^\d{4}-\d{1,2}-\d{1,2} \d{1,2}:\d{1,2}:\d{1,2}$/\', ';
 				}
-				if(strpos($key['Type'], 'date') !== false){ 
+				if(strpos($key['Type'], 'date') !== false && strpos($key['Type'], 'datetime') === false){
 					$rule.='\'regex\' => \'/^\d{4}-\d{1,2}-\d{1,2}$/\', ';
 				}
 				if(strpos(strtolower($key['Field']), 'mail') !== false){ 

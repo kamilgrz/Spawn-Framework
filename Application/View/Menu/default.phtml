@@ -5,7 +5,7 @@ foreach($rows as $key => $val){
 	if(preg_match('#^'.$key.'#i',$uri)){
 		$class='active';
 	}
-	echo '<li><a href="'.$val['href'].'" title="'.$val['title'].'" class="'.$class.'">'.$val['name'].'</a></li>';
+	echo '<li class="'.$class.'"><a href="'.$val['href'].'" title="'.$val['title'].'">'.$val['name'].'</a></li>';
 }
 ?>
 </ul>

@@ -17,7 +17,8 @@ $t -> setAction('download', function($act, $id){
 	return '<a href="'.$act.'?download='.$id.'">Download</a>';
 });
 
-$t -> top(array('Id', 'Title', 'User', 'Add Date', 'Options'));
+$t -> top(array('Id', 'Title', 'User', 'Add Date', 'Options'), //top info
+          array('Id', 'Title', 'User', 'Add_Date'));//top search
 $t -> rows($values, array(
 	'id',
 	'title',
@@ -65,6 +66,11 @@ class DataGrid
 	* @var object
 	*/
 	public $row;
+
+    /**
+    * @var bool
+    */
+    protected $_search = false;
 		
 	
 	/**
@@ -84,15 +90,44 @@ class DataGrid
      * @param array $top
 	 * @return self
      */
-	public function top(array $dataList)
+	public function top(array $dataList, array $search = null)
 	{
 		$str = '';
 		foreach($dataList as $key){
 			$str .= '<th>'.$key.'</th>';
 		}
-		$this->_str = '<thead><tr>'.$str.'</tr></thead>'.PHP_EOL;
+		$this->_str = '<thead><tr>'.$str.'</tr>';
+        if(null != $search) {
+            $this->_str .= $this->_search($search);
+        }
+        $this->_str .= '</thead>'.PHP_EOL;
 		return $this;
 	}
+
+    protected function _search(array $rows)
+    {
+        $this->_search = true;
+
+        $str = '<tr>';
+        $form = new \Spawn\Form();
+        $request = new \Spawn\Request();
+
+        foreach($rows as $row) {
+
+            if(is_callable($row)) {
+                $data = $row();
+            }else {
+                $data = $form->text($row,$request->post($row), array('class'=>'input-small search-query'));
+            }
+
+            $str .= '<th>'.$data.'</th>';
+        }
+        $str .= '<th>'.$form->submit('»').'</th>';
+
+        $str .= '</tr>';
+
+        return $str;
+    }
 	
 	/**
      * table rows
@@ -178,11 +213,14 @@ class DataGrid
 	/**
 	* @return string
 	*/
-	public function render($class = 'table')
+	public function render($class = 'table table-striped table-bordered table-hover table-condensed')
 	{
 		$str = '<table class="'.$class.'">';
 		$str .= $this -> _str;
 		$str .= '</table>';
+        if(true == $this->_search) {
+            $str = '<form action="" method="post">'.$str.'</form>';
+        }
 		return $str;
 	}
 		
@@ -202,3 +240,4 @@ class DataGrid
 		return $this->render();
 	}
 }
+
