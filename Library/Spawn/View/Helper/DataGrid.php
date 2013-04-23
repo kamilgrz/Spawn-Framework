@@ -17,8 +17,7 @@ $t -> setAction('download', function($act, $id){
 	return '<a href="'.$act.'?download='.$id.'">Download</a>';
 });
 
-$t -> top(array('Id', 'Title', 'User', 'Add Date', 'Options'), //top info
-          array('Id', 'Title', 'User', 'Add_Date'));//top search
+$t -> top(array('Id', 'Title', 'User', 'Add Date', 'Options'));
 $t -> rows($values, array(
 	'id',
 	'title',
@@ -67,9 +66,6 @@ class DataGrid
 	*/
 	public $row;
 
-    /**
-    * @var bool
-    */
     protected $_search = false;
 		
 	
@@ -219,7 +215,7 @@ class DataGrid
 		$str .= $this -> _str;
 		$str .= '</table>';
         if(true == $this->_search) {
-            $str = '<form action="" method="post">'.$str.'</form>';
+            $str = '<form action="" method="post" class="form-search">'.$str.'</form>';
         }
 		return $str;
 	}

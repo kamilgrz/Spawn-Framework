@@ -8,9 +8,7 @@
  * @copyright (c) 2013 Paweł Makowski
  * @license http://spawnframework.com/license New BSD License
  */
-
 namespace Spawn;
-
 
 class DI
 {
@@ -18,6 +16,16 @@ class DI
      * @var array
      */
     protected static $_data = array();
+
+    /**
+     * @param $name
+     * @return object
+     */
+    function __get($name)
+    {
+        $model = $this->get($name);
+        return $model;
+    }
 
     /**
      * @param string $key
@@ -41,15 +49,24 @@ class DI
             Throw new DIException('DI: '.$name.' not found!');
         }elseif(is_callable(self::$_data[$name])) {
             $cal = self::$_data[$name];
-            return $cal();
+            self::$_data[$name] = $cal();
         }elseif(is_string(self::$_data[$name])) {
-            return new self::$_data[$name]();
-        }elseif(is_object(self::$_data[$name])) {
-            return self::$_data[$name];
-        }else{
+            self::$_data[$name] = new self::$_data[$name]();
+        }elseif(is_array(self::$_data[$name])) {
             $rc = new \ReflectionClass(self::$_data[$name][0]);
-            return $rc->newInstanceArgs(self::$_data[$name][1]);
+            self::$_data[$name] = $rc->newInstanceArgs(self::$_data[$name][1]);
+        }else {
         }
+        return self::$_data[$name];
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function has($name)
+    {
+        return isset(self::$_data[$name]);
     }
 }
 class DIException extends \Exception{}

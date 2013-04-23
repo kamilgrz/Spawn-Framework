@@ -50,6 +50,8 @@ class Template extends \Spawn\Controller
 	*/
 	public function __construct()
 	{
+	    parent::__construct();
+	     
 		if(null === $this -> tmp) {
 			$uri = new \Spawn\Request\Uri;
 			$this -> tmp = ucfirst($uri->param(0));

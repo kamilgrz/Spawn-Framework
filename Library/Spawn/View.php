@@ -5,7 +5,7 @@
 * View
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2012 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package View
 */
@@ -33,7 +33,7 @@ class View
 	protected $_name = null;
 	
 	/**
-         * @var \View\Tpl
+         * @var \Spawn\View\Tpl
          */
 	protected $_tpl = null;
 	
@@ -83,9 +83,24 @@ class View
 					ucfirst($controller) . DIRECTORY_SEPARATOR . $uri -> param(1)
 				);
 		}	
-		
+
+        $this->loadDIHelpers();
 		$this -> _page = $this -> _name.$type;
 	}
+
+    public function loadDIHelpers()
+    {
+        $di = new DI;
+        if(!$di->has('datagrid')) $di->set('datagrid', '\Spawn\View\Helper\DataGrid');
+        if(!$di->has('gravatar')) $di->set('gravatar', '\Spawn\View\Helper\Gravatar');
+        if(!$di->has('html')) $di->set('html', '\Spawn\View\Helper\Html');
+        if(!$di->has('menu')) $di->set('menu', '\Spawn\View\Helper\Menu');
+        if(!$di->has('assetsLoader')) $di->set('assetsLoader', '\Spawn\View\Helper\AssetsLoader');
+        if(!$di->has('table')) $di->set('table', '\Spawn\View\Helper\Table');
+        if(!$di->has('alert')) $di->set('alert', '\Spawn\View\Helper\Alert');
+
+        $this -> _values['di'] = $di;
+    }
 	
 	/**
 	*use sf_tpl method if sf_view havent 
@@ -254,3 +269,4 @@ class View
 }//View
 
 class ViewException extends \Exception {}
+

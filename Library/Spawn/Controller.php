@@ -33,7 +33,35 @@ class Controller
     */
     public $response = '';
 
-	/**
+    /**
+     * @var \Spawn\DI
+     */
+    public $di;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->di = new \Spawn\DI();
+        if(!$this->di->has('alert')) $this->di->set('alert', '\Spawn\View\Helper\Alert');
+        if(!$this->di->has('auth')) $this->di->set('auth', '\Spawn\Auth');
+        if(!$this->di->has('benchmark')) $this->di->set('benchmark', '\Spawn\Benchmark');
+        if(!$this->di->has('token')) $this->di->set('token', '\Spawn\Token');
+        if(!$this->di->has('acl')) $this->di->set('acl', '\Spawn\Acl');
+    }
+
+    /**
+     * @param $name
+     * @return object
+     */
+    function __get($name)
+    {
+        $model = $this->di->get($name);
+        return $model;
+    }
+
+    /**
     *
     * @param string $url
     */
@@ -111,3 +139,4 @@ class Controller
 	public function end(){}
 	
 }//controller
+

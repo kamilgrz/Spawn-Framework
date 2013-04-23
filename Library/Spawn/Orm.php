@@ -584,7 +584,7 @@ class Orm
 		$file .= '    {'.PHP_EOL;
 		$file .= '        $dataList = $this->findAll($fromRecord, $countRecord);'.PHP_EOL;
 		$file .= '        $dataGrid = new \Spawn\View\Helper\DataGrid();'.PHP_EOL;
-		$file .= '        $dataGrid->top(array(\''.$struct.'\', \'Options\'));'.PHP_EOL;
+		$file .= '        $dataGrid->top(array(\''.$struct.'\', \'Options\'), array(\''.$struct.'\'));'.PHP_EOL;
 		$file .= '        $dataGrid->rows($dataList, array(\''.$struct.'\', array(\'view\', \'edit\', \'delete\')));'.PHP_EOL;
 		$file .= '        return $dataGrid;'.PHP_EOL;
 		$file .= '    }'.PHP_EOL;
@@ -660,3 +660,4 @@ class Orm
 }//orm
 
 class OrmException extends \Exception {}
+

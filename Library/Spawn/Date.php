@@ -5,7 +5,7 @@
 * Date
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2012 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 */
 namespace Spawn;
@@ -26,7 +26,7 @@ class Date
 	*/
 	public static function now($His = false)
 	{
-		return (false == $His)? date('Y-m-d') : date('Y-m-d H:i:s');
+		return (false == $His)? date('Y-m-d H:i:s'): date('Y-m-d');
 	}
 	
 	/**
@@ -82,3 +82,4 @@ class Date
 	}
 	
 }
+
