@@ -232,21 +232,21 @@ class Auth
 	* @param+ string
 	* @return integer 
 	*/
-	public function add()
+	public function add($args)
 	{
-		$toAdd = array();
-		$args = func_get_args();
-        if(!is_string($args[0])){
-            $toAdd = $args[0];
-        }else {
+        if(is_string($args)) {
+            $args = array();
+            $row = func_get_args();
             foreach($this -> _config['toAdd'] as $key => $val) {
-                $args[ $key ] = (isset($args[ $key ]))? $args[ $key ]: null;
-                $toAdd[ $val ] = ($val != $this -> _config['password'])?
-                $args[ $key ] : $this -> hashPass($args[ $key ]);
+                $args[$val] = $row[$key];
             }
         }
-		
-		return $this -> _db -> insert($this -> _config['table'], $toAdd);
+
+        foreach($args as $key => $val) {
+            $args[ $key ] = ($key != $this -> _config['password'])? $args[ $key ] : $this -> hashPass($args[ $key ]);
+        }
+
+		return $this -> _db -> insert($this -> _config['table'], $args);
 	}
 	
 	
@@ -293,3 +293,4 @@ class Auth
 	}
 
 }//auth
+

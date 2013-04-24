@@ -5,7 +5,7 @@
  * Bootstrap
  *
  * @author  Paweł Makowski
- * @copyright (c) 2010-2011 Paweł Makowski
+ * @copyright (c) 2013 Paweł Makowski
  * @license http://spawnframework.com/license New BSD License
  */
 namespace Spawn;

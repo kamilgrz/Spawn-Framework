@@ -5,7 +5,7 @@
 * View
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2012 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package View
 */
@@ -213,15 +213,15 @@ class View
 	}
 	
 	/**
-	* load \Spawn\View\Helper
+	* add helper to DI
 	*
 	* @param string $name
+	* @param mixed $val
 	* @return $this
 	*/
-	public function setHelper($name)
+	public function setHelper($name, $val)
 	{   
-	    $obj = '\Spawn\View\Helper\\'.$name;
-	    $this -> _values[ $name ] = new $obj();
+	    $this -> _values['di']->set($name, $val);
 	    return $this;
 	}
 	
