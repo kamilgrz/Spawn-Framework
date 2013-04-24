@@ -12,7 +12,7 @@
 * Spawn.GetAction 
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2011 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 */
 namespace Spawn;
@@ -32,12 +32,18 @@ class Event
     protected $_registry;
 
     /**
+     * @var DI
+     */
+    protected $_di;
+
+    /**
      * load events
      */
-    public function __construct()
+    public function __construct($di)
     {
         $this -> _registry = new Registry('Sf');
         $this -> _event = $this -> _registry -> get('Event', array());
+        $this->_di = $di;
     }
 
     /**
@@ -47,9 +53,9 @@ class Event
      * @param array $args
      * @return Event
      */
-	public function add($eventName, $callback, array $args = array())
+	public function add($eventName, $callback)
 	{
-	    $this -> _event[ $eventName ][] = array($callback, $args);
+	    $this -> _event[ $eventName ][] = $callback;
 	    return $this;
 	}
 
@@ -72,9 +78,9 @@ class Event
 	public function run($eventName)
 	{
 	    if( isset( $this -> _event[ $eventName ] ) ){
-	        foreach( $this -> _event[ $eventName ] as $key)
+	        foreach( $this -> _event[ $eventName ] as $event)
 	        {
-	            call_user_func_array($key[0], $key[1]);
+	            $event($this->_di);
 	        }	    
 	    }
 	    return $this;

@@ -5,7 +5,7 @@
 * View
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2013 Paweł Makowski
+* @copyright (c) 2010-2012 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package View
 */
@@ -98,6 +98,7 @@ class View
         if(!$di->has('assetsLoader')) $di->set('assetsLoader', '\Spawn\View\Helper\AssetsLoader');
         if(!$di->has('table')) $di->set('table', '\Spawn\View\Helper\Table');
         if(!$di->has('alert')) $di->set('alert', '\Spawn\View\Helper\Alert');
+        if(!$di->has('form')) $di->set('form', '\Spawn\Form');
 
         $this -> _values['di'] = $di;
     }
@@ -269,4 +270,3 @@ class View
 }//View
 
 class ViewException extends \Exception {}
-

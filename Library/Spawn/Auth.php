@@ -35,7 +35,7 @@ class Auth
     protected $_data = false;
     
     /**
-    * @var \Auth\Remember
+    * @var \Spawn\Auth\Remember
     */
     public $remember;
     			
@@ -236,11 +236,15 @@ class Auth
 	{
 		$toAdd = array();
 		$args = func_get_args();
-		foreach($this -> _config['toAdd'] as $key => $val){
-                        $args[ $key ] = (isset($args[ $key ]))? $args[ $key ]: null;
-			$toAdd[ $val ] = ($val != $this -> _config['password'])?
-				 $args[ $key ] : $this -> hashPass($args[ $key ]);
-		}
+        if(!is_string($args[0])){
+            $toAdd = $args[0];
+        }else {
+            foreach($this -> _config['toAdd'] as $key => $val) {
+                $args[ $key ] = (isset($args[ $key ]))? $args[ $key ]: null;
+                $toAdd[ $val ] = ($val != $this -> _config['password'])?
+                $args[ $key ] : $this -> hashPass($args[ $key ]);
+            }
+        }
 		
 		return $this -> _db -> insert($this -> _config['table'], $toAdd);
 	}

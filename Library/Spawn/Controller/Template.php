@@ -48,10 +48,10 @@ class Template extends \Spawn\Controller
 	/**
 	* load View to $view and $view->content
 	*/
-	public function __construct()
+	public function __construct($di=null)
 	{
-	    parent::__construct();
-	     
+        parent::__construct($di);
+
 		if(null === $this -> tmp) {
 			$uri = new \Spawn\Request\Uri;
 			$this -> tmp = ucfirst($uri->param(0));

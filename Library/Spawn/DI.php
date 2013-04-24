@@ -8,7 +8,9 @@
  * @copyright (c) 2013 Paweł Makowski
  * @license http://spawnframework.com/license New BSD License
  */
+
 namespace Spawn;
+
 
 class DI
 {
@@ -67,6 +69,34 @@ class DI
     public function has($name)
     {
         return isset(self::$_data[$name]);
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function delete($name)
+    {
+        if($this->has($name)) {
+            unset(self::$_data[$name]);
+        }
+        return $this;
+    }
+
+    /**
+     * @param bool $run
+     * @return array
+     */
+    public function getAll($run = false)
+    {
+        if(false == $run) return self::$_data;
+
+        $data = array();
+        $keys = array_keys(self::$_data);
+        foreach($keys as $key) {
+            $data[$key] = $this->get($key);
+        }
+        return $data;
     }
 }
 class DIException extends \Exception{}

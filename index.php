@@ -10,19 +10,23 @@ error_reporting(E_ALL|E_STRICT);
 
 date_default_timezone_set('Europe/Warsaw');
 
-define('SPAWNM','2.3.0');
+define('SPAWNM','2.4.0');
 define('ROOT_PATH', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
 
-include_once(ROOT_PATH . 'Library/Spawn/Loader.php');
-include_once(ROOT_PATH . 'Library/Spawn/Router.php');
-include_once(ROOT_PATH . 'Library/Spawn/Spawn.php');
+include_once(ROOT_PATH . 'Library'.DIRECTORY_SEPARATOR.'Spawn'.DIRECTORY_SEPARATOR.'Loader.php');
+include_once(ROOT_PATH . 'Library'.DIRECTORY_SEPARATOR.'Spawn'.DIRECTORY_SEPARATOR.'Router.php');
+include_once(ROOT_PATH . 'Library'.DIRECTORY_SEPARATOR.'Spawn'.DIRECTORY_SEPARATOR.'Spawn.php');
+include_once(ROOT_PATH . 'Library'.DIRECTORY_SEPARATOR.'Spawn'.DIRECTORY_SEPARATOR.'BootstrapAbstract.php');
+include_once(ROOT_PATH . 'Library'.DIRECTORY_SEPARATOR.'Spawn'.DIRECTORY_SEPARATOR.'DI.php');
+include_once(ROOT_PATH . 'Application'.DIRECTORY_SEPARATOR.'Bootstrap.php');
 
 set_error_handler( array('\Spawn\Spawn', 'exception') );
 set_exception_handler( array('\Spawn\Spawn', 'exception') );
 
 $loader = new \Spawn\Loader;
-$loader -> setIncludePath('Library/')
-        -> setIncludePath('Application/')
+$loader -> setIncludePath('Library'.DIRECTORY_SEPARATOR)
+        -> setIncludePath('Application'.DIRECTORY_SEPARATOR)
+        -> setIncludePath('Application'.DIRECTORY_SEPARATOR.'Helper'.DIRECTORY_SEPARATOR)
         -> register();
 
 $spawn = new \Spawn\Spawn;
@@ -32,3 +36,4 @@ $spawn -> controller = 'Spawn';
 $spawn -> action = 'index';
 $spawn -> init();
 ?>
+

@@ -5,7 +5,7 @@
 * Controller
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2011 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Controller
 */
@@ -41,9 +41,9 @@ class Controller
     /**
      *
      */
-    public function __construct()
+    public function __construct($di=null)
     {
-        $this->di = new \Spawn\DI();
+        $this->di = (null != $di)? $di : new DI;
         if(!$this->di->has('alert')) $this->di->set('alert', '\Spawn\View\Helper\Alert');
         if(!$this->di->has('auth')) $this->di->set('auth', '\Spawn\Auth');
         if(!$this->di->has('benchmark')) $this->di->set('benchmark', '\Spawn\Benchmark');
@@ -139,4 +139,3 @@ class Controller
 	public function end(){}
 	
 }//controller
-
