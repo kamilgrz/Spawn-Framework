@@ -121,6 +121,7 @@ class Alert
     {
         $title = $this->_registry->get('success.title');
         $data = $this->_registry->get('success');
+        if($data == null) return '';
         $data = $this->_prepareData($data);
         return $this->getTpl('alert-success', $title, $data, $isBlock);
     }
@@ -133,6 +134,7 @@ class Alert
     {
         $title = $this->_registry->get('info.title');
         $data = $this->_registry->get('info');
+        if($data == null) return '';
         $data = $this->_prepareData($data);
         return $this->getTpl('alert-info', $title, $data, $isBlock);
     }
@@ -145,6 +147,7 @@ class Alert
     {
         $title = $this->_registry->get('error.title');
         $data = $this->_registry->get('error');
+        if($data == null) return '';
         $data = $this->_prepareData($data);
         return $this->getTpl('alert-error', $title, $data, $isBlock);
     }
@@ -157,10 +160,66 @@ class Alert
     {
         $title = $this->_registry->get('alert.title');
         $data = $this->_registry->get('alert');
+        if($data == null) return '';
         $data = $this->_prepareData($data);
         return $this->getTpl('', $title, $data, $isBlock);
     }
 
+    /**
+     * @param string $str
+     * @param mixed $val
+     * @param bool $isBlock
+     * @return string
+     */
+    public function error($str, $val = null, $isBlock = false)
+    {
+        $title = (null == $val)? '' : $str;
+        $data = (null == $val)? $str : $val;
+        $data = $this->_prepareData($data);
+        return $this->getTpl('alert-error', $title, $data, $isBlock);
+    }
+
+    /**
+     * @param string $str
+     * @param mixed $val
+     * @param bool $isBlock
+     * @return string
+     */
+    public function success($str, $val = null, $isBlock = false)
+    {
+        $title = (null == $val)? '' : $str;
+        $data = (null == $val)? $str : $val;
+        $data = $this->_prepareData($data);
+        return $this->getTpl('alert-success', $title, $data, $isBlock);
+    }
+
+    /**
+     * @param string $str
+     * @param mixed $val
+     * @param bool $isBlock
+     * @return string
+     */
+    public function info($str, $val = null, $isBlock = false)
+    {
+        $title = (null == $val)? '' : $str;
+        $data = (null == $val)? $str : $val;
+        $data = $this->_prepareData($data);
+        return $this->getTpl('alert-info', $title, $data, $isBlock);
+    }
+
+    /**
+     * @param string $str
+     * @param mixed $val
+     * @param bool $isBlock
+     * @return string
+     */
+    public function warning($str, $val = null, $isBlock = false)
+    {
+        $title = (null == $val)? '' : $str;
+        $data = (null == $val)? $str : $val;
+        $data = $this->_prepareData($data);
+        return $this->getTpl('', $title, $data, $isBlock);
+    }
 
     /**
      * @param mixed $data
