@@ -5,7 +5,7 @@
 * Mail
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2011 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 */
 namespace Spawn;
@@ -58,9 +58,10 @@ class Mail
 	public function send($to, $subject, $message)
 	{
 		$headers  = 'MIME-Version: 1.0' . "\n";
-		$headers .= 'Content-Type: text/html; charset=utf-8'."\n".
+		$headers .= 'Content-Type: text/html; charset=utf-8'."\n";
 		$headers .= 'From: ' . $this -> _fromTitle . ' <' . $this -> _fromMail . '>' . "\n";
 		$headers .= 'Reply-To: '.$this -> _fromMail."\n";
+		$headers .= 'X-Mailer: PHP/' . phpversion();
 		return mail( $to , $subject , $message , $headers );
 	}
 	

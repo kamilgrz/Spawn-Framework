@@ -10,8 +10,31 @@
 * @package Helper
 */
 namespace Spawn\View\Helper;
+
+use \Spawn\Config as Config;
+
 class Html
 {
+    /**
+     * @param string $src
+     * @param array $params
+     * @return string
+     */
+    public function img($src, array $params = array())
+    {
+        $str = '<img src="';
+        if(strpos($src,'http')===0) {
+            $str .= $src;
+        }else {
+            $str .= Config::load('Uri') -> get('base').'Media/Images/'.$src;
+        }
+        $str .= '" ';
+        foreach($params as $key => $val) {
+            $str .= $key.'="'.$val.'" ';
+        }
+        $str .= '/>';
+        return $str;
+    }
 
 	/**
          *
@@ -164,3 +187,4 @@ class Html
 
 
 }//html
+

@@ -23,10 +23,32 @@ class DI
      * @param $name
      * @return object
      */
-    function __get($name)
+    public function __get($name)
     {
         $model = $this->get($name);
         return $model;
+    }
+
+    /**
+     * @param $name
+     * @param $args
+     * @return mixed
+     * @throws DIException
+     */
+    public function __call($name, $args)
+    {
+        if(is_callable(self::$_data[$name])) {
+            $cal = self::$_data[$name];
+            self::$_data[$name] = $cal($args);
+        }elseif(is_string(self::$_data[$name])){
+            $rc = new \ReflectionClass(self::$_data[$name]);
+            self::$_data[$name] = $rc->newInstanceArgs($args);
+            return self::$_data[$name];
+        }elseif(!isset(self::$_data[$name])) {
+            Throw new DIException('DI: '.$name.' not found!');
+        }else{
+            Throw new DIException('DI: '.$name.' can\'t be used!');
+        }
     }
 
     /**
@@ -41,8 +63,8 @@ class DI
     }
 
     /**
-     * @param $name
-     * @return DI
+     * @param string $name
+     * @return object
      * @throws DIException
      */
     public function get($name)
@@ -62,6 +84,15 @@ class DI
         return self::$_data[$name];
     }
 
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public function getValue($name)
+    {
+        return self::$_data[$name];
+    }
+    
     /**
      * @param string $name
      * @return bool
