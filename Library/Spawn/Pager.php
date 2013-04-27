@@ -26,7 +26,7 @@ class Pager
 	/**
 	* @var string
 	*/
-	public $path = 'Application/View/Pager/';
+	public $path = 'Application/View/_Pager/';
 	
 	/**
 	* declare config , pages , view

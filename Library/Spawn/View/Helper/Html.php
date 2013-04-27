@@ -35,6 +35,28 @@ class Html
         $str .= '/>';
         return $str;
     }
+    
+    /**
+     * @param string $src
+     * @param array $params
+     * @return string
+     */
+    public function href($href, $name=null, array $params = array())
+    {
+        $name = ($name != null)? $name : $href;
+        $str = '<a href="';
+        if(strpos($href, 'http')===0) {
+            $str .= $href;
+        }else {
+            $str .= Config::load('Uri') -> get('base').$href;
+        }
+        $str .= '" ';
+        foreach($params as $key => $val) {
+            $str .= $key.'="'.$val.'" ';
+        }
+        $str .= '>'.$name.'</a>';
+        return $str;
+    }
 
 	/**
          *

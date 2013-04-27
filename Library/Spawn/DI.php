@@ -30,6 +30,15 @@ class DI
     }
 
     /**
+     * @param string $name
+     * @param mixed $val
+     */
+    public function __set($name,$val)
+    {
+        $this->set($name, $val);
+    }
+
+    /**
      * @param $name
      * @param $args
      * @return mixed
@@ -131,3 +140,4 @@ class DI
     }
 }
 class DIException extends \Exception{}
+

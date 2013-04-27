@@ -1,9 +1,15 @@
 <?php
 class bootstrap extends \Spawn\BootstrapAbstract
 {
-    protected $_use = array('database', 'session', 'event', 'firewall');
+    protected $_use = array('di', 'database', 'session', 'event', 'firewall');
 
-    protected function _database()
+
+    protected function _di($di)
+    {
+        
+    }
+    
+    protected function _database($di)
     {
         /*
         $dbc = new \Spawn\Db\Connect();
@@ -12,7 +18,7 @@ class bootstrap extends \Spawn\BootstrapAbstract
         */
     }
 
-    protected function _session()
+    protected function _session($di)
     {
         /*
         $session = new \Spawn\Session();
@@ -23,11 +29,14 @@ class bootstrap extends \Spawn\BootstrapAbstract
         */
     }
 
-    protected function _event()
+    protected function _event($di)
     {
+
     }
 
-    protected function _firewall()
+    protected function _firewall($di)
     {
+
     }
 }
+

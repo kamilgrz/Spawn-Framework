@@ -73,7 +73,7 @@ class Menu
 	public function render()
 	{
 		$uri = new \Spawn\Request\Uri;	
-		$view = new \Spawn\View('Menu'.DIRECTORY_SEPARATOR.$this->_tpl);
+		$view = new \Spawn\View('_Menu'.DIRECTORY_SEPARATOR.$this->_tpl);
 		$view->uri = implode('/', $uri -> getAll());
 		$view->rows = $this->getRows();
 		return $view->render();

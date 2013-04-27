@@ -1,0 +1,23 @@
+<div class="pagination">
+<ul>
+<?php
+if($back==true){
+	echo '<li><a href="'.str_replace('__PAGE__',($page-1),$href).'">«</a></li>';
+}else{
+	echo '<li class="disabled"><a href="#">«</a></li>';
+}
+
+for($i=0; $i<$pages; $i++){
+	$active =  ($page==($i))? 'class="active"': '';
+	$url='<li '.$active.'><a href="'.str_replace('__PAGE__',$i,$href).'">'.($i+1).'</a></li>';
+	echo $url;
+}
+
+if($next==true){
+	echo '<li><a href="'.str_replace('__PAGE__',($page+1),$href).'">»</a></li>';
+}else{
+	echo '<li class="disabled"><a href="#">»</a></li>';
+}
+?>
+</ul>
+</div>
