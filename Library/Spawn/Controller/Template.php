@@ -5,7 +5,7 @@
 * template controller
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2012 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Controller
 */
@@ -19,7 +19,7 @@ class Template extends \Spawn\Controller
          * template name
          * @var string
          */
-	public $tmp = null;
+	public $tpl = null;
 	
 	/**
 	* false or 'content' View object
@@ -52,11 +52,11 @@ class Template extends \Spawn\Controller
 	{
         parent::__construct($di);
 
-		if(null === $this -> tmp) {
+		if(null === $this -> tpl) {
 			$uri = new \Spawn\Request\Uri;
-			$this -> tmp = ucfirst($uri->param(0));
+			$this -> tpl = ucfirst($uri->param(0));
 		} 
-		$this -> view = new View($this -> tmp);		
+		$this -> view = new View($this -> tpl);
 		$this -> view = $this -> _tpl($this -> view);
 		
 		if( true === $this -> content) {
@@ -96,4 +96,5 @@ class Template extends \Spawn\Controller
 		echo $this -> view -> render();
 	}		
 }
+
 

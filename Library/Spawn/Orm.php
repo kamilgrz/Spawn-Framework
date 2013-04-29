@@ -172,10 +172,13 @@ class Orm
 	*/
 	public function setData(array $data, $secure = true)
 	{
-		$this -> _find = $data;
-		if($secure == true && isset($this->_find[$this->_tableKey])){
-			unset($this->_find[$this->_tableKey]);
-		}
+        if($secure == true && isset($data[$this->_tableKey])){
+            unset($data[$this->_tableKey]);
+        }
+        if(!Arr::isArray($this->find)){
+            $this -> _find = new \ArrayObject($this->_find);
+        }
+		$this -> _find = array_merge($this->_find->getArrayCopy(), $data);
 		return $this;
 	}
 	
