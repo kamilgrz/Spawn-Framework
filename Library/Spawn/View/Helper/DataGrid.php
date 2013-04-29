@@ -201,7 +201,7 @@ class DataGrid
 	{
 		if(null == $this->_url){
 			$uri = new \Spawn\Request\Uri;
-			$this->_url = \Spawn\Config::Load('Uri') -> get('base').$uri->param(0);
+			$this->_url = $uri->param(0);
 		}
 		return $this->_url;
 	}
