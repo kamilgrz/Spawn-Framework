@@ -176,6 +176,7 @@ class Orm
             unset($data[$this->_tableKey]);
         }
         if(!Arr::isArray($this->find)){
+            $this->_find = ($this->_find)? $this->_find: array();
             $this -> _find = new \ArrayObject($this->_find);
         }
 		$this -> _find = array_merge($this->_find->getArrayCopy(), $data);
