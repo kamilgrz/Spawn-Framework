@@ -66,14 +66,23 @@ class DataGrid
 	*/
 	public $row;
 
+    /**
+     * @var bool
+     */
     protected $_search = false;
+
+    /**
+     * @var string
+     */
+    protected $_name;
 		
 	
 	/**
      * add default row actions - [view, update, delete]
      */
-	public function __construct()
-	{		
+	public function __construct($name = 'default')
+	{
+        $this->_name = $name;
 		$this->_action['view'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/view/'.$id).'" class="view btn btn-link">View</a>'; };	
 		$this->_action['edit'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/edit/'.$id).'" class="edit btn btn-link">Edit</a>'; };	
 		$this->_action['delete'] = function($act, $id) { return '<a href="'.\Spawn\Url::site($act.'/delete/'.$id).'" class="delete btn btn-link">Delete</a>'; };
@@ -88,11 +97,26 @@ class DataGrid
      */
 	public function top(array $dataList, array $search = null)
 	{
+        $orderData = \Spawn\Session::load()->get('order_'.$this->_name);
 		$str = '';
-		foreach($dataList as $key){
+
+        if(!\Spawn\Arr::isAssoc($dataList)) {
+            $dataList = array_combine(array_values($dataList), array_values($dataList));
+        }
+
+		foreach($dataList as $key => $val) {
+            $order = (isset($orderData[$key]) && $orderData[$key] != 'ASC')? 'ASC': 'DESC';
+
+            asort($dataList);
+            if($val == $dataList[key($dataList)]) {
+                $order = 'CLEAR';
+            }
+
+            $key = '<a href="?'.$key.'='.$order.'">'.$val.'</a>';
 			$str .= '<th>'.$key.'</th>';
 		}
 		$this->_str = '<thead><tr>'.$str.'</tr>';
+
         if(null != $search) {
             $this->_str .= $this->_search($search);
         }

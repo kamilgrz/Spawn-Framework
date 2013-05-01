@@ -30,73 +30,129 @@ class Alert
     protected $_tpl = '<div class="alert {ALERT}"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>{TITLE}</strong> {BODY}</div>';
 
     /**
+     * @var array
+     */
+    protected $_alert = array('error'=>'alert-error', 'info'=>'alert-info', 'success'=>'alert-success', 'warning'=>'');
+
+    /**
      *
      */
     public function __construct()
     {
         $this->_registry = new \Spawn\Registry('Sf.Alert');
+        $this->_session = \Spawn\Session::load();
     }
 
     /**
-     * @param mixed $title
-     * @param mixed $val
+     * @param $str
+     * @param null $val
      * @return $this
      */
     public function setError($str, $val = null)
     {
-        $title = (null == $val)? '' : $str;
-        $val = (null == $val)? $str : $val;
-
-        $this->_registry->set('error.title', $title);
-        $this->_registry->set('error', $val);
-
-        return $this;
+        return $this->_setData('error', $str, $val);
     }
 
     /**
-     * @param mixed $title
-     * @param mixed $val
+     * @param $str
+     * @param null $val
      * @return $this
      */
     public function setInfo($str, $val = null)
     {
-        $title = (null == $val)? '' : $str;
-        $val = (null == $val)? $str : $val;
-
-        $this->_registry->set('info.title', $title);
-        $this->_registry->set('info', $val);
-
-        return $this;
+        return $this->_setData('info', $str, $val);
     }
 
     /**
-     * @param mixed $title
-     * @param mixed $val
+     * @param $str
+     * @param null $val
      * @return $this
      */
     public function set($str, $val = null)
     {
+        return $this->_setData('warning', $str, $val);
+    }
+
+    /**
+     * @param $str
+     * @param null $val
+     * @return $this
+     */
+    public function setSuccess($str, $val = null)
+    {
+        return $this->_setData('success', $str, $val);
+    }
+
+    /**
+     * @param $name
+     * @param $str
+     * @param null $val
+     * @return $this
+     */
+    protected function _setData($name, $str, $val = null)
+    {
         $title = (null == $val)? '' : $str;
         $val = (null == $val)? $str : $val;
 
-        $this->_registry->set('alert.title', $title);
-        $this->_registry->set('alert', $val);
+        $this->_registry->set($name.'.title', $title);
+        $this->_registry->set($name, $val);
 
         return $this;
     }
 
     /**
-     * @param mixed $title
-     * @param mixed $val
+     * @param $str
+     * @param null $val
      * @return $this
      */
-    public function setSuccess($str, $val = null)
+    public function setErrorFlash($str, $val = null)
+    {
+        return $this->_setDataFlash('error', $str, $val);
+    }
+
+    /**
+     * @param $str
+     * @param null $val
+     * @return $this
+     */
+    public function setSuccessFlash($str, $val = null)
+    {
+        return $this->_setDataFlash('success', $str, $val);
+    }
+
+    /**
+     * @param $str
+     * @param null $val
+     * @return $this
+     */
+    public function setInfoFlash($str, $val = null)
+    {
+        return $this->_setDataFlash('info', $str, $val);
+    }
+
+    /**
+     * @param $str
+     * @param null $val
+     * @return $this
+     */
+    public function setFlash($str, $val = null)
+    {
+        return $this->_setDataFlash('warning', $str, $val);
+    }
+
+    /**
+     * @param $name
+     * @param $str
+     * @param null $val
+     * @return $this
+     */
+    protected function _setDataFlash($name, $str, $val = null)
     {
         $title = (null == $val)? '' : $str;
         $val = (null == $val)? $str : $val;
 
-        $this->_registry->set('success.title', $title);
-        $this->_registry->set('success', $val);
+        $this->_session->setFlash($name.'.title', $title);
+        $this->_session->setFlash($name, $val);
 
         return $this;
     }
@@ -119,11 +175,7 @@ class Alert
      */
     public function getSuccess($isBlock = false)
     {
-        $title = $this->_registry->get('success.title');
-        $data = $this->_registry->get('success');
-        if($data == null) return '';
-        $data = $this->_prepareData($data);
-        return $this->getTpl('alert-success', $title, $data, $isBlock);
+        return $this->_getData('success', $isBlock);
     }
 
     /**
@@ -132,11 +184,7 @@ class Alert
      */
     public function getInfo($isBlock = false)
     {
-        $title = $this->_registry->get('info.title');
-        $data = $this->_registry->get('info');
-        if($data == null) return '';
-        $data = $this->_prepareData($data);
-        return $this->getTpl('alert-info', $title, $data, $isBlock);
+        return $this->_getData('info', $isBlock);
     }
 
     /**
@@ -145,11 +193,7 @@ class Alert
      */
     public function getError($isBlock = false)
     {
-        $title = $this->_registry->get('error.title');
-        $data = $this->_registry->get('error');
-        if($data == null) return '';
-        $data = $this->_prepareData($data);
-        return $this->getTpl('alert-error', $title, $data, $isBlock);
+        return $this->_getData('error', $isBlock);
     }
 
     /**
@@ -158,11 +202,21 @@ class Alert
      */
     public function get($isBlock = false)
     {
-        $title = $this->_registry->get('alert.title');
-        $data = $this->_registry->get('alert');
+        return $this->_getData('warning', $isBlock);
+    }
+
+    /**
+     * @param $name
+     * @param bool $isBlock
+     * @return string
+     */
+    protected function _getData($name, $isBlock = false)
+    {
+        $title = $this->_session->getFlash($name.'.title',$this->_registry->get($name.'.title'));
+        $data = $this->_session->getFlash($name,$this->_registry->get($name));
         if($data == null) return '';
         $data = $this->_prepareData($data);
-        return $this->getTpl('', $title, $data, $isBlock);
+        return $this->getTpl($this->_alert[$name], $title, $data, $isBlock);
     }
 
     /**
@@ -173,10 +227,7 @@ class Alert
      */
     public function error($str, $val = null, $isBlock = false)
     {
-        $title = (null == $val)? '' : $str;
-        $data = (null == $val)? $str : $val;
-        $data = $this->_prepareData($data);
-        return $this->getTpl('alert-error', $title, $data, $isBlock);
+        return $this->_data('error', $str, $val, $isBlock);
     }
 
     /**
@@ -187,10 +238,7 @@ class Alert
      */
     public function success($str, $val = null, $isBlock = false)
     {
-        $title = (null == $val)? '' : $str;
-        $data = (null == $val)? $str : $val;
-        $data = $this->_prepareData($data);
-        return $this->getTpl('alert-success', $title, $data, $isBlock);
+        return $this->_data('success', $str, $val, $isBlock);
     }
 
     /**
@@ -201,10 +249,7 @@ class Alert
      */
     public function info($str, $val = null, $isBlock = false)
     {
-        $title = (null == $val)? '' : $str;
-        $data = (null == $val)? $str : $val;
-        $data = $this->_prepareData($data);
-        return $this->getTpl('alert-info', $title, $data, $isBlock);
+        return $this->_data('info', $str, $val, $isBlock);
     }
 
     /**
@@ -215,10 +260,22 @@ class Alert
      */
     public function warning($str, $val = null, $isBlock = false)
     {
+        return $this->_data('warning', $str, $val, $isBlock);
+    }
+
+    /**
+     * @param $name
+     * @param $str
+     * @param null $val
+     * @param bool $isBlock
+     * @return string
+     */
+    public function _data($name, $str, $val = null, $isBlock = false)
+    {
         $title = (null == $val)? '' : $str;
         $data = (null == $val)? $str : $val;
         $data = $this->_prepareData($data);
-        return $this->getTpl('', $title, $data, $isBlock);
+        return $this->getTpl($this->_alert[$name], $title, $data, $isBlock);
     }
 
     /**

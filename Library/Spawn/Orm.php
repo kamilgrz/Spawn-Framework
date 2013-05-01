@@ -510,9 +510,13 @@ class Orm
 		$rules = '';
 		$form = '';
 		$search = '';
+        $orderByData = array('upData'=>'', 'orderBy'=>'');
 		foreach($structTable as $key){
 			$search .= '        if($request->post(\''.$key['Field'].'\')) $this->_db->where(\'`'.$name.'`.`'.$key['Field'].'` LIKE\', \'%\'.$request->post(\''.$key['Field'].'\').\'%\');'.PHP_EOL;
-			$struct[] = $key['Field'];			
+			$orderByData['upData'] .= '        if(isset($orderData[\''.$key['Field'].'\']) or $request->get(\''.$key['Field'].'\')) $orderData[\''.$key['Field'].'\'] = (isset($orderData[\''.$key['Field'].'\']))?  $request->get(\''.$key['Field'].'\', $orderData[\''.$key['Field'].'\']): $request->get(\''.$key['Field'].'\');'.PHP_EOL;
+            $orderByData['orderBy'] .= '        if(isset($orderData[\''.$key['Field'].'\'])) $this->_db->order(\'`'.$name.'`.`'.$key['Field'].'` \'.$orderData[\''.$key['Field'].'\']);'.PHP_EOL;
+
+            $struct[] = $key['Field'];
 						
 			if(!($pri == null AND trim($key['Key']) == 'PRI')){
 				$ftype = (strpos($key['Type'], 'text')!==false)? 'textarea' : 'text';
@@ -584,10 +588,28 @@ class Orm
 		$file .= '        return $this;'.PHP_EOL;
 		$file .= '    }'.PHP_EOL;
 		$file .= ''.PHP_EOL;
+        $file .= '    public function orderByData($clear = true)'.PHP_EOL;
+        $file .= '    {'.PHP_EOL;
+        $file .= '        $request = $this->getRequest();'.PHP_EOL;
+        $file .= '        $session = \Spawn\Session::load();'.PHP_EOL;
+        $file .= '        $orderData = $session->get(\'order_'.$name.'\');'.PHP_EOL;
+        $file .= ''.PHP_EOL;
+        $file .= '        if(true == $clear && array_intersect(array_keys($request->get(false, array())), $this->_structure)) $orderData = array();'.PHP_EOL;
+        $file .= ''.PHP_EOL;
+        $file .= $orderByData['upData'];
+        $file .= '        if($request->get(\'Options\')) $orderData = array();'.PHP_EOL;
+        $file .= ''.PHP_EOL;
+        $file .= '        $session->set(\'order_'.$name.'\', $orderData);'.PHP_EOL;
+        $file .= ''.PHP_EOL;
+        $file .= '        $this->_db->order = array();'.PHP_EOL;
+        $file .= $orderByData['orderBy'];
+        $file .= '        return $this;'.PHP_EOL;
+        $file .= '    }'.PHP_EOL;
+        $file .= ''.PHP_EOL;
 		$file .= '    public function getDataGrid($fromRecord = null, $countRecord = null)'.PHP_EOL;
 		$file .= '    {'.PHP_EOL;
 		$file .= '        $dataList = $this->findAll($fromRecord, $countRecord);'.PHP_EOL;
-		$file .= '        $dataGrid = new \Spawn\View\Helper\DataGrid();'.PHP_EOL;
+		$file .= '        $dataGrid = new \Spawn\View\Helper\DataGrid(\''.$name.'\');'.PHP_EOL;
 		$file .= '        $dataGrid->top(array(\''.$struct.'\', \'Options\'), array(\''.$struct.'\'));'.PHP_EOL;
 		$file .= '        $dataGrid->rows($dataList, array(\''.$struct.'\', array(\'view\', \'edit\', \'delete\')));'.PHP_EOL;
 		$file .= '        return $dataGrid;'.PHP_EOL;

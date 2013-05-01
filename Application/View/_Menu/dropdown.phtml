@@ -20,7 +20,7 @@ $menu = function($rows, $menu, $submenu) use($uri){
 			if(preg_match('#^'.$key.'#i',$uri)){
 				$class='active';
 			}
-			$str .= '<li><a href="'.$val['href'].'" class="'.$class.'">'.$val['name'].'</a></li>';
+			$str .= '<li class="'.$class.'"><a href="'.$val['href'].'">'.$val['name'].'</a></li>';
 		}
 	}
 	return $str;
