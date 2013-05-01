@@ -105,15 +105,15 @@ class DataGrid
         }
 
 		foreach($dataList as $key => $val) {
-            $order = (isset($orderData[$key]) && $orderData[$key] != 'ASC')? 'ASC': 'DESC';
+            $order = (isset($orderData[$key]) && $orderData[$key] != 'DESC')? 'DESC': 'ASC';
 
             asort($dataList);
             if($val == $dataList[key($dataList)]) {
                 $order = 'CLEAR';
             }
 
-            $key = '<a href="?'.$key.'='.$order.'">'.$val.'</a>';
-			$str .= '<th>'.$key.'</th>';
+            $a = '<a href="?'.$key.'='.$order.'">'.$val.'</a>';
+			$str .= '<th class="th_'.$key.'">'.$a.'</th>';
 		}
 		$this->_str = '<thead><tr>'.$str.'</tr>';
 
@@ -128,19 +128,21 @@ class DataGrid
     {
         $this->_search = true;
 
-        $str = '<tr>';
+        $str = '<tr class="tr_search">';
         $form = new \Spawn\Form();
         $request = new \Spawn\Request();
 
+        $i=1;
         foreach($rows as $row) {
 
             if(is_callable($row)) {
                 $data = $row();
             }else {
-                $data = $form->text($row,$request->post($row), array('class'=>'input-small search-query'));
+                $data = $form->text($row,$request->post($row), array('class'=>'input-small'));
             }
 
-            $str .= '<th>'.$data.'</th>';
+            $str .= '<th class="th_'.$i.'">'.$data.'</th>';
+            $i++;
         }
         $str .= '<th>'.$form->submit('»').'</th>';
 
@@ -176,13 +178,15 @@ class DataGrid
 					}
 					$row[] = $str;
 				}			
-			}	
-			$trClass = ($i%2 == 1)? 'tr2' : 'tr1';
-			$str = '';
-			foreach($row as $key){
-				$str .= '<td>'.$key.'</td>';
 			}
-			$rows .= '<tr class="'.$trClass.'">'.$str.'</tr>'.PHP_EOL;
+
+			$str = '';
+            $j=1;
+			foreach($row as $key){
+				$str .= '<td class="td_'.$j.'">'.$key.'</td>';
+                $j++;
+			}
+			$rows .= '<tr class="tr_'.$i.'">'.$str.'</tr>'.PHP_EOL;
 			$i++;
 		}
 		
