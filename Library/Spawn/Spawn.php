@@ -71,12 +71,12 @@ final class Spawn
             $controller = '\Controller\\' .str_replace(' ', '\\',ucwords(str_replace(self::$controllerSeparator, ' ', $controller_core)));
             $action     = $uri->param(1, $this -> action ).'Action';
 
-            if( ! method_exists($controller, $action) ){
+            if( !class_exists($controller) && !method_exists($controller, $action ) ){
                 $controller_core = $controller_core . self::$controllerSeparator . $this->controller;
                 $controller = $controller.'\\'.$this->controller;
             }
 
-            if( ! method_exists($controller, $action ) ){
+            if( !class_exists($controller) && !method_exists($controller, $action ) ){
                 $this -> router -> init( $uri );
                 $uri = $this -> router -> getUri();
                 $controller = '\Controller\\' . str_replace(' ', '\\', ucwords(str_replace(self::$controllerSeparator, ' ',  $this -> router -> getController())));
@@ -85,7 +85,7 @@ final class Spawn
                 $uri -> setParam(0, $controller_core ) -> setParam(1, $uri->param(1, $this -> action ) );
             }
 
-            if( ! method_exists($controller, $action) ){
+            if( !class_exists($controller) && !method_exists($controller, $action ) ){
                 self::error404();
             }
             $firewall->start();
@@ -152,3 +152,4 @@ final class Spawn
 
 
 }//spawn
+

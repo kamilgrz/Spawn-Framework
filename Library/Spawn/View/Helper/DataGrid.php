@@ -112,8 +112,8 @@ class DataGrid
         foreach($dataList as $key => $val) {
             $order = (isset($orderData[$key]) && $orderData[$key] != 'DESC')? 'DESC': 'ASC';
 
-            asort($dataList);
-            if($val == $dataList[key($dataList)]) {
+            $clear = key(array_reverse($dataList));
+            if($key === $clear) {
                 $order = 'CLEAR';
             }
 
