@@ -514,7 +514,7 @@ class Orm
 		foreach($structTable as $key){
 			$search .= '        if($request->post(\''.$key['Field'].'\')) $this->_db->where(\'`'.$name.'`.`'.$key['Field'].'` LIKE\', \'%\'.$request->post(\''.$key['Field'].'\').\'%\');'.PHP_EOL;
 			$orderByData['upData'] .= '        if(isset($orderByData[\''.$key['Field'].'\']) or $request->get(\''.$key['Field'].'\')) $orderByData[\''.$key['Field'].'\'] = (isset($orderByData[\''.$key['Field'].'\']))?  $request->get(\''.$key['Field'].'\', $orderByData[\''.$key['Field'].'\']): $request->get(\''.$key['Field'].'\');'.PHP_EOL;
-            $orderByData['orderBy'] .= '        if(isset($orderByData[\''.$key['Field'].'\'])) $this->_db->order(\'`'.$name.'`.`'.$key['Field'].'` \'.$orderByData[\''.$key['Field'].'\']);'.PHP_EOL;
+            $orderByData['orderBy'] .= '            if(isset($orderByData[\''.$key['Field'].'\'])) $this->_db->order(\'`'.$name.'`.`'.$key['Field'].'` \'.$orderByData[\''.$key['Field'].'\']);'.PHP_EOL;
 
             $struct[] = $key['Field'];
 						
@@ -592,7 +592,7 @@ class Orm
         $file .= '    {'.PHP_EOL;
         $file .= '        $request = $this->getRequest();'.PHP_EOL;
         $file .= '        $session = \Spawn\Session::load();'.PHP_EOL;
-        $file .= '        $orderByData = $session->get(\'order_'.$name.'\');'.PHP_EOL;
+        $file .= '        $orderByData = $session->get(\'order_'.$name.'\', array());'.PHP_EOL;
         $file .= ''.PHP_EOL;
         $file .= '        if(true == $clear && array_intersect(array_keys($request->get(false, array())), $this->_structure)) $orderByData = array();'.PHP_EOL;
         $file .= ''.PHP_EOL;
@@ -601,12 +601,9 @@ class Orm
         $file .= ''.PHP_EOL;
         $file .= '        $session->set(\'order_'.$name.'\', $orderByData);'.PHP_EOL;
         $file .= ''.PHP_EOL;
-        $file .= '        if($orderByData){'.PHP_EOL;
-        $file .= '            $this->_db->order = array();'.PHP_EOL;
-        $file .= $orderByData['orderBy'];
-        $file .= '         }'.PHP_EOL;
-        $file .= '        return $this;'.PHP_EOL;
-        $file .= '    }'.PHP_EOL;
+        $file .= '        foreach($orderByData as $key => $val) {'.PHP_EOL;
+        $file .= '            $orderByData[$key] = ($val != \'DESC\')? \'ASC\' : \'DESC\';'.PHP_EOL;
+        $file .= '        }'.PHP_EOL;
         $file .= ''.PHP_EOL;
 		$file .= '    public function getDataGrid($fromRecord = null, $countRecord = null)'.PHP_EOL;
 		$file .= '    {'.PHP_EOL;
