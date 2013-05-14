@@ -54,6 +54,7 @@ final class Spawn
     {
         ob_start();
         try{
+        	$this->baseDetect();
             $di = new DI;
             $firewall = new \Spawn\Firewall($di);
             $this -> event  = new Event($di);
@@ -113,10 +114,33 @@ final class Spawn
             include_once(ROOT_PATH . 'Application'. DIRECTORY_SEPARATOR .'View'. DIRECTORY_SEPARATOR .'Error'. DIRECTORY_SEPARATOR .'exception.phtml');
         }
     }
-
+	
+	/**
+	*
+	*/
     public function shutdown()
     {
         $this -> event -> run('Spawn.Shutdown');
+    }
+    
+    /**
+    *
+    */
+    public function baseDetect()
+    {
+        $sn = explode('/', $_SERVER['SCRIPT_NAME']);
+        $index = current(array_reverse($sn));
+        $base = str_replace($index,'',$_SERVER['SCRIPT_NAME']);
+
+        if(Config::load('Uri')->get('base') != $base) {
+            $config = include(ROOT_PATH.'Bin/Config/Uri.php');
+
+            $config['base'] = $base;
+            Config::load('Uri')->set('base',$base);
+
+            $data = '<?php '.PHP_EOL.'return $config = '.var_export($config, true).';';
+            file_put_contents(ROOT_PATH.'Bin/Config/Uri.php', $data);
+        }
     }
 
 

@@ -5,7 +5,7 @@
 * Url
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2012 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 */
 namespace Spawn;
@@ -13,14 +13,15 @@ class Url
 {
 	
 	/**
-    * /controller/action
+    * (base)/controller/action
     *
     * @return string
     */
-	public static function base()
+	public static function base($base=true)
 	{	
 		$uri = new Request\Uri;
-		return '/' . $uri -> param(0) . '/' . $uri -> param(1);
+		$baseUri = $uri->param(0).'/'.$uri -> param(1);
+        return (true == $base)? Config::Load('Uri')->get('base').$baseUri: '/'.$baseUri;
 	}	
 	
 	/**
@@ -84,7 +85,7 @@ class Url
 		}
 		
 		$uri = new Request\Uri;	
-		$baseUrl = '/' . implode('/', $uri -> getAll()) . Config::load('Uri') -> get('endOfUri') . $baseUrl;
+		$baseUrl = Config::Load('Uri') -> get('base') . implode('/', $uri -> getAll()) . Config::load('Uri') -> get('endOfUri') . $baseUrl;
 		
 		return $baseUrl;	
 	}
@@ -99,7 +100,7 @@ class Url
 	*@param integer $id
 	*@return string
 	*/
-	public static function uri( $val, $id = null )
+	public static function uri( $val, $id = null, $base = true )
 	{
 	    $uri = new Request\Uri;
 		$param = $uri -> getAll();
@@ -110,11 +111,12 @@ class Url
 			$param[] = $val;
 		}
 		
-		$baseUrl = '/' . implode('/', $param) . Config::load('Uri') -> get('endOfUri');
+		$baseUrl =  implode('/', $param) . Config::load('Uri') -> get('endOfUri');
 		if( isset($_GET) AND count($_GET) > 0 ){
 			$baseUrl .= '?' . http_build_query($_GET, '', '&amp;');
 		}		
-		return $baseUrl;
+		return (true == $base)? Config::Load('Uri') -> get('base').$baseUrl : $baseUrl;
 	}
 		
 }//url
+
