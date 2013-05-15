@@ -99,6 +99,7 @@ class View
         if(!$di->has('table')) $di->set('table', '\Spawn\View\Helper\Table');
         if(!$di->has('alert')) $di->set('alert', '\Spawn\View\Helper\Alert');
         if(!$di->has('form')) $di->set('form', '\Spawn\Form');
+        if(!$di->has('url')) $di->set('url', '\Spawn\Url');
 
         $this -> _values['di'] = $di;
     }

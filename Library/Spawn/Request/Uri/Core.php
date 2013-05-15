@@ -127,6 +127,7 @@ class Core
 		
 		$qPos = strpos($path, '?');
 		if(false !== $qPos){
+			parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY),$_GET);
 			$path = substr($path, 0, $qPos);
 		}
 		

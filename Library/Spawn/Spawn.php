@@ -108,7 +108,7 @@ final class Spawn
             $this -> event  -> run('Spawn.Finish') -> delete('Spawn.Finish');
 
         }catch(\Exception $error) {
-            $this -> event  -> run('Spawn.Exception') -> delete('Spawn.Exception');
+            $this -> event  -> run('Spawn.Exception', $error) -> delete('Spawn.Exception');
             $buff = ob_get_contents();
             ob_end_clean();
             include_once(ROOT_PATH . 'Application'. DIRECTORY_SEPARATOR .'View'. DIRECTORY_SEPARATOR .'Error'. DIRECTORY_SEPARATOR .'exception.phtml');

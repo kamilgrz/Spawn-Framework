@@ -75,12 +75,12 @@ class Event
          * @param string $eventName
          * @return Event
          */
-	public function run($eventName)
+	public function run($eventName, $args = null)
 	{
 	    if( isset( $this -> _event[ $eventName ] ) ){
 	        foreach( $this -> _event[ $eventName ] as $event)
 	        {
-	            $event($this->_di);
+	            $event($this->_di, $args);
 	        }	    
 	    }
 	    return $this;
