@@ -126,11 +126,10 @@ class Core
 		$path = ( isset($_SERVER['REQUEST_URI']) )?  $_SERVER['REQUEST_URI'] : '/';
 		
 		$qPos = strpos($path, '?');
-		if(false !== $qPos){
-			parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY),$_GET);
+		if(false !== $qPos){			
 			$path = substr($path, 0, $qPos);
 		}
-		
+		parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY),$_GET);
 		return $path;
 	}
 	
