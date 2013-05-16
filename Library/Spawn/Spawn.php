@@ -54,13 +54,13 @@ final class Spawn
     {
         ob_start();
         try{
-        	$this->baseDetect();
-            $di = new DI;
-            $firewall = new \Spawn\Firewall($di);
-            $this -> event  = new Event($di);
+        	$di = new DI;
+        	$this -> event  = new Event($di);        	           
+            $firewall = new \Spawn\Firewall($di);            
             $di->set('event', $this->event);
             $di->set('firewall', $firewall);
             $this -> bootstrap($di);
+            $this->baseDetect(); 
 
             $this -> event  -> run('Spawn.Ready') -> delete('Spawn.Ready');
 
@@ -140,6 +140,10 @@ final class Spawn
 
             $data = '<?php '.PHP_EOL.'return $config = '.var_export($config, true).';';
             file_put_contents(ROOT_PATH.'Bin/Config/Uri.php', $data);
+            
+            $htaccess = file_get_contents(ROOT_PATH.'.htaccess');
+            $htaccess = preg_replace('#RewriteBase (.*)#', 'RewriteBase '.$base, $htaccess);
+            file_put_contents(ROOT_PATH.'.htaccess', $htaccess);
         }
     }
 
@@ -162,15 +166,24 @@ final class Spawn
     /**
      *
      */
-    public static function exception( $severity, $message, $filename, $lineno )
+    public static function exception( $severity, $message='', $filename=__FILE__, $lineno=__LINE__ )
     {
         if (0 == error_reporting()) {
             return;
         }
+        
         if( class_exists('Log') ){
             Log::add($message.' File: '.$filename.' Line: '.$lineno);
         }
-        throw new \ErrorException($message, 0, $severity, $filename, $lineno);
+        
+        if(is_object($severity)){
+        	$error = $severity;
+        	$buff = ob_get_contents();
+            ob_end_clean();
+            include_once(ROOT_PATH . 'Application'. DIRECTORY_SEPARATOR .'View'. DIRECTORY_SEPARATOR .'Error'. DIRECTORY_SEPARATOR .'exception.phtml');
+        }else{
+        	throw new \ErrorException($message, E_ERROR, $severity, $filename, $lineno);
+        }
     }
 
 
