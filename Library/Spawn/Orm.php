@@ -605,6 +605,13 @@ class Orm
         $file .= '            $orderByData[$key] = ($val != \'DESC\')? \'ASC\' : \'DESC\';'.PHP_EOL;
         $file .= '        }'.PHP_EOL;
         $file .= ''.PHP_EOL;
+        $file .= '        if($orderByData){'.PHP_EOL;
+        $file .= '            $this->_db->order = array();'.PHP_EOL;
+        $file .= $orderByData['orderBy'];
+        $file .= '         }'.PHP_EOL;
+        $file .= '        return $this;'.PHP_EOL;
+        $file .= '    }'.PHP_EOL;
+        $file .= ''.PHP_EOL;
 		$file .= '    public function getDataGrid($fromRecord = null, $countRecord = null)'.PHP_EOL;
 		$file .= '    {'.PHP_EOL;
 		$file .= '        $dataList = $this->findAll($fromRecord, $countRecord);'.PHP_EOL;

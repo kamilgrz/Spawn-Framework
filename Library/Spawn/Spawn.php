@@ -141,9 +141,11 @@ final class Spawn
             $data = '<?php '.PHP_EOL.'return $config = '.var_export($config, true).';';
             file_put_contents(ROOT_PATH.'Bin/Config/Uri.php', $data);
             
-            $htaccess = file_get_contents(ROOT_PATH.'.htaccess');
-            $htaccess = preg_replace('#RewriteBase (.*)#', 'RewriteBase '.$base, $htaccess);
-            file_put_contents(ROOT_PATH.'.htaccess', $htaccess);
+            if(file_exists(ROOT_PATH.'.htaccess')) {
+                $htaccess = file_get_contents(ROOT_PATH.'.htaccess');
+                $htaccess = preg_replace('#RewriteBase (.*)#', 'RewriteBase '.$base, $htaccess);
+                file_put_contents(ROOT_PATH.'.htaccess', $htaccess);
+            }
         }
     }
 
