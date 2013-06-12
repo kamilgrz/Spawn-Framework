@@ -5,7 +5,7 @@
 * Access Control List
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2011 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Acl
 */
@@ -51,17 +51,24 @@ class Acl
                 $this -> addRole($key);
             }
         }
-	
-	/**
-         *
-         * @param string|Group $group
-         * @return Acl
-         */
-	public function addGroup($group)
+
+    /**
+     * @param string|object $group
+     * @param array $roles
+     * @return $this
+     */
+    public function addGroup($group, array $roles = null)
 	{
         $group = (is_string($group))? new Group($group) : $group;
         $name = $group -> getName();
 		$this -> _group[ $name ] = $group;
+
+        if(null != $roles) {
+            foreach($roles as $key) {
+                $this->setGroupRole($name, $key);
+            }
+        }
+
 		return $this;
 	}
 	
@@ -217,3 +224,4 @@ class Acl
         }
 		
 }//acl
+
