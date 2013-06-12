@@ -5,7 +5,7 @@
 * user acl group
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2011 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Acl
 */
@@ -121,7 +121,7 @@ class Group
     * @param string
     * @return $this
     */
-    public function setInherit($name)
+    public function addInherit($name)
     {
         $this -> _inherit[] = $name;
         return $this;

@@ -93,7 +93,7 @@ class Acl
          */
 	public function inherit($name, $inherit)
 	{
-		$this -> _group[ $name ] -> setInherit( $this -> _group[ $inherit ] -> getName() );
+		$this -> _group[ $name ] -> addInherit( $this -> _group[ $inherit ] -> getName() );
 		return $this;
 	}
 	
@@ -164,28 +164,41 @@ class Acl
 	/**
          *
          * @param string|array $roles role or group name
-         * @param string $find
-         * @return <type>
+         * @param string $find role
+     *  @param bool $inAll
+         * @return bool
          */
-	public function isAllowed($roles, $find=null)
+	public function isAllowed($roles, $find=null, $inAll = true)
 	{
 		$roles = (is_array($roles) )? $roles : array($roles);
+        $ia = false;
 		foreach($roles as $name){		
-			if( null == $find && isset($this -> _role[ $name ]) ){
+			$ia = $this->_isAllowed($name, $find);
+            if($ia == false && $inAll == true) {
+                return false;
+            }
+            if($ia == true && $inAll == false) {
                 return true;
             }
-			if( !isset($this -> _group[ $name ]) ){
-			    return false;                    
-			}
-			if( $this -> _group[ $name ] -> roleIsset($find) ){
-			    return true;
-			}    
-			$inherit = $this -> _group[ $name ] -> getInherit();
-			$this -> find = $find;
-			return $this -> _searchRoleInGroupInherit($inherit);	
 		}
-		return false;
+		return $ia;
 	}
+
+    protected function _isAllowed($name, $find)
+    {
+        if( null == $find && isset($this -> _role[ $name ]) ){
+            return true;
+        }
+        if( !isset($this -> _group[ $name ]) ){
+            return false;
+        }
+        if( $this -> _group[ $name ] -> roleIsset($find) ){
+            return true;
+        }
+        $inherit = $this -> _group[ $name ] -> getInherit();
+        $this -> find = $find;
+        return $this -> _searchRoleInGroupInherit($inherit);
+    }
 	
 	protected function _searchRoleInGroupInherit($inherit)
 	{   
