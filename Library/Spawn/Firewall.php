@@ -40,7 +40,7 @@ class Firewall
         $uri = new \Spawn\Request\Uri;
         $uri = implode('/', $uri -> getAll());
         foreach($this->_data as $key => $val){
-            if( preg_match('#'.$key.'#', $uri) ){
+            if( preg_match('#'.$key.'#i', $uri) ){
                 $result = $val();
                 $this->_valid($result);
             }
