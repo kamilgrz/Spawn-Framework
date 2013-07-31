@@ -134,4 +134,12 @@ class Pager
 		return ($this -> cfg['page'])*$this -> cfg['limit'];
 	}
 	
+	/**
+     * @return integer
+     */
+    public function limit()
+    {
+        return $this -> cfg['limit'];
+    }
+	
 }//pager

@@ -5,7 +5,7 @@
 * Valid
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2012 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Valid
 */
@@ -27,56 +27,6 @@ class Valid extends \Spawn\Valid\Core
          * @var array
          */
 	protected $_toValidError = array();
-
-        /**
-         *
-         * @param string $name
-         * @param array $toValid
-         * @param array $data
-         * @return className
-         */
-	public static function factory($name, array $toValid, $data)
-    {
-        $cname = str_replace('_', '\\', $name);
-        $className = '\Model\Valid\\' . $cname;
-        if( !class_exists($className) ){
-            self::createValidModelFile( $cname );
-        }
-        
-        return new $className($toValid, $data);
-    }   
-
-    /**
-     * @param string $name
-     */
-    public static function createValidModelFile($name)
-    {    
-        $dirs = explode('\\',$name);
-		
-		unset($dirs[ count($dirs)-1 ]);
-		$dir = ROOT_PATH . 'Application' . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Valid';
-		foreach($dirs as $key){
-			$dir .= DIRECTORY_SEPARATOR . $key;
-			if( !file_exists($dir) ){
-			    mkdir($dir, 0777);
-			}    
-		}
-		
-        $cName = ( strpos($name, '\\') === false )? $name: substr($name, strripos($name, '\\') + 1); 
-	    $cSpace = substr($name, 0, strripos($name, '\\') );
-		$cSpace  = ($cSpace != '')? '\\'.$cSpace : '';
-		
-        $str = '<?php' . PHP_EOL;
-        $str .= 'namespace Model\Valid' . $cSpace . ';' . PHP_EOL;
-        $str .= 'class ' . $cName . ' extends \Spawn\Valid\ValidAbstract {' . PHP_EOL;
-        $str .= '   protected function _init(){}' . PHP_EOL;
-        $str .= '}'; 
-        
-        $name = str_replace( '\\', DIRECTORY_SEPARATOR, $name);
-        $fileName = ROOT_PATH . 'Application' . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Valid' . DIRECTORY_SEPARATOR . $name . '.php';
-        file_put_contents($fileName, $str);     
-        chmod($fileName, 0777);
-    }
 
 	
 	/**
@@ -201,56 +151,4 @@ class Valid extends \Spawn\Valid\Core
 		return $this -> _toValidError;
 	}
 	
-	/**
-	* code test
-	*
-	* @return array
-	*/
-	public function test()
-	{
-		$v= new \Spawn\Valid(array(
-			'name'=>'Spawnm',
-			'email'=>'spawnm@spawnm.pl'
-		));
-		$v->setRules(array(
-				'name'=>array(
-					'maxStrLength'=>55,
-					'minStrLength'=>3,
-					'required'=>true
-				),
-				'pass'=>array(
-					'minStrLength'=>6,
-					'required'=>true
-				),
-				'email'=>array(
-					'mail'=>'',
-				),
-		));
-		//false, array(pass)
-		$res['test_1'] = array($v->validAll()->isValid(), $v->getError());
-		
-		$v= new \Spawn\Valid(array(
-			'name'=>'damn',
-			'pass'=>'superPass123',
-			'date'=>'2012-01-10'
-		));
-		$v->setRules(array(
-				'name'=>array(
-					'maxStrLength'=>55,
-					'minStrLength'=>3,
-					'required'=>true
-				),
-				'pass'=>array(
-					'minStrLength'=>6,
-					'required'=>true
-				),
-				'date'=>array(
-					'regex'=>'/^\d{4}-\d{1,2}-\d{1,2}$/',
-				),
-		));
-		//true, array()
-		$res['test_2'] = array($v->validAll()->isValid(), $v->getError());
-		return $res;
-	}
-
 }//valid

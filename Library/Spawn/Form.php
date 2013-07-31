@@ -40,7 +40,7 @@ class Form
     /**
 	* @var string
 	*/ 
-	protected $_rowDataError = '<div class="control-group alert alert-error"><label class="control-label ">{Label}<sup>{Required}</sup></label><div class="controls">{Input} {About}</div></div>';
+	protected $_rowDataError = '<div class="control-group error"><label class="control-label ">{Label}<sup>{Required}</sup></label><div class="controls">{Input} {About}</div></div>';
     /**
      * @var string
      */
@@ -647,11 +647,12 @@ class Form
 					$inp = $this -> radio($val['name'], $val['value'], $val['checked'] ,$val['params'] );
 				break;
 				case 'checkbox':
-					$val = Arr::update($val, array('name', 'value', 'params','checked'), '');
+					$val = Arr::update($val, array('name', 'value', 'params', 'checked'), '');
 					$inp = $this -> checkbox($val['name'], $val['value'],$val['checked'] , $val['params']);
 				break;
 				case 'boxList':
-					$val = Arr::update($val, array('checked', 'sep'), '');
+                    $val['sep'] = ( isset($val['sep']) )? $val['sep'] : '';
+                    $val['checked'] = ( isset($val['checked']) )? $val['checked'] : array();
 					$inp = $this -> boxList($val['name'], $val['values'], $val['checked'], $val['sep']);
 				break;
 				case 'radioList':
@@ -670,11 +671,12 @@ class Form
 			if(isset($val['name']) AND in_array($val['name'], $this -> _toErrorArray)) $val['error'] = 1;
 			
 			//create input
-			$req = in_array('required', $val)? '*' : '';
+			$req = array_key_exists('required', $val)? '*' : '';
 			$form .= ( !in_array($val['type'], array('hidden', 'datalist') ) )? $this -> row( $key, $inp, $val['about'] , $req, $val['error']) : $inp;
 		}
 		return $form;
 	}	
 		
 }//form
+
 
