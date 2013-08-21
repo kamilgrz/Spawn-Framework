@@ -60,7 +60,6 @@ final class Spawn
             $di->set('event', $this->event);
             $di->set('firewall', $firewall);
             $this -> bootstrap($di);
-            $this->baseDetect(); 
 
             $this -> event  -> run('Spawn.Ready') -> delete('Spawn.Ready');
 
@@ -126,12 +125,17 @@ final class Spawn
     /**
     *
     */
-    public function baseDetect()
+    public static function baseDetect()
     {
-        $sn = explode('/', $_SERVER['SCRIPT_NAME']);
+    	$script_name = $_SERVER['SCRIPT_NAME'];
+        $sn = explode('/', $script_name);
         $index = current(array_reverse($sn));
-        $base = str_replace($index,'',$_SERVER['SCRIPT_NAME']);
-
+        $base = str_replace($index,'',$script_name);
+		
+		if(strpos($base, '/')!==0) {
+			throw new \Exception('Invalid script name');
+		}
+		
         if(Config::load('Uri')->get('base') != $base) {
             $config = include(ROOT_PATH.'Bin/Config/Uri.php');
 

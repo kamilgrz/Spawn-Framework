@@ -1,8 +1,13 @@
 <?php
 class bootstrap extends \Spawn\BootstrapAbstract
 {
-    protected $_use = array('di', 'database', 'session', 'event', 'firewall');
+    protected $_use = array('base', 'di', 'database', 'session', 'event', 'firewall');
 
+	protected function _base($di)
+    {
+       \Spawn\Spawn::baseDetect();
+       define('BASE', \Spawn\Config::load('Uri')->get('base'));
+    }
 
     protected function _di($di)
     {
