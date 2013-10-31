@@ -129,17 +129,17 @@ class Pager
 	/**
 	* @return integer
 	*/
-	public function offset()
+	public function getOffset()
 	{
 		return ($this -> cfg['page'])*$this -> cfg['limit'];
 	}
 	
 	/**
-     * @return integer
-     */
-    public function limit()
-    {
-        return $this -> cfg['limit'];
-    }
+	* @return integer
+	*/
+	public function GetLimit()
+	{
+		return $this -> cfg['limit'];	
+	}
 	
 }//pager

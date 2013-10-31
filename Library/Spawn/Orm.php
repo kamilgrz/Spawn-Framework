@@ -70,7 +70,8 @@ class Orm
 	public function __construct( Db $db = null)
 	{
 		$this -> _db = (null == $db)? new Db() : $db;			
-		$this -> filter('Default');		
+		$this -> filter('Default');	
+		$this -> _find = new \stdClass;	
 	}
 	
 	/**
@@ -95,11 +96,7 @@ class Orm
 	*/
 	public function __set($key, $val)
 	{
-		if( !is_object($this -> _find) ){
-			$this -> _find[ $key ] = $val;
-		}else{
-			$this -> _find -> $key = $val;
-		}
+		$this -> _find -> $key = $val;
 	}
 	
 	/**
@@ -111,15 +108,10 @@ class Orm
 	public function __get($name)
 	{
 		if( null != $this -> _find ){
-			if( is_array($this -> _find) ){
-				if( isset($this -> _find[ $name ]) ) return $this -> _find[ $name ];
-			}else{
-				if( isset($this -> _find -> {$name}) ) return $this -> _find -> {$name};
-			}
+			if( isset($this -> _find -> {$name}) ) return $this -> _find -> {$name};			
 		}	
 		if( isset($this -> {$name}) ) return $this -> {$name};
-		return null;
-		
+		return null;		
 	}
 	
 	

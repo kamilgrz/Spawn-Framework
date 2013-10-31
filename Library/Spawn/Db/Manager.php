@@ -14,7 +14,7 @@ namespace Spawn\Db;
 class Manager
 {
     /**
-     * @var Registry
+     * @var \Spawn\Registry
      */
     protected $_registry;
 
@@ -77,7 +77,7 @@ class Manager
         /**
          *
          * @param string $name
-         * @param Db\Connect|PDO $db
+         * @param \Db\Connect|PDO $db
          * @return Manager
          */
 	public function setDb($name, $db)
