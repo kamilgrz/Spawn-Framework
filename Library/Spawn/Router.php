@@ -67,7 +67,7 @@ class Router
 			$this -> _isRoute = (bool) $this -> _val = $key($req);
 			if(true == $this -> _isRoute) {
 				$this -> _location();
-				$this -> _uri -> path = preg_replace('#'.$this -> _uri -> param(0).'#', $this -> _val['request_uri'], $this -> _uri -> path);
+				$this -> _uri -> path = preg_replace('#'.$this -> _uri -> param(0).'#i', $this -> _val['request_uri'], $this -> _uri -> path);
 				break;
 			}
 		}
@@ -93,12 +93,12 @@ class Router
 	    $req = $this -> _uri -> path;
 		foreach($cfgArr as $key => $val)
 		{
-			if( preg_match('#'.$key.'#', $req) ){
+			if( preg_match('#'.$key.'#i', $req) ){
 				$this -> _isRoute = true;
 				$val = ( !is_callable($val) )? $val : $val($req);					
 				$this -> _val = $val;
 				$this -> _location();
-				$this -> _uri -> path = preg_replace('#'.$key.'#', $val['request_uri'], $req);
+				$this -> _uri -> path = preg_replace('#'.$key.'#i', $val['request_uri'], $req);
 				      			
 				break;
 			}

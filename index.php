@@ -10,8 +10,10 @@ error_reporting(E_ALL|E_STRICT);
 
 date_default_timezone_set('Europe/Warsaw');
 
-define('SPAWNM','2.5.1');
+define('SPAWNM','2.7.1');
 define('ROOT_PATH', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
+define('DEV', true);
+
 
 include_once(ROOT_PATH . 'Library'.DIRECTORY_SEPARATOR.'Spawn'.DIRECTORY_SEPARATOR.'Loader.php');
 include_once(ROOT_PATH . 'Library'.DIRECTORY_SEPARATOR.'Spawn'.DIRECTORY_SEPARATOR.'Router.php');

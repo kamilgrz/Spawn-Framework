@@ -137,7 +137,7 @@ class Pager
 	/**
 	* @return integer
 	*/
-	public function GetLimit()
+	public function getLimit()
 	{
 		return $this -> cfg['limit'];	
 	}

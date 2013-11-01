@@ -124,10 +124,10 @@ class Controller
 		
 		$param = ($param == null)? $this -> request : $param;
 		
-		$this -> event -> run('Spawn.GetAction');
+		$this -> event -> run('Spawn.GetAction', array($controller, $action, $param, $init, $end));
 		$controller = new $cName;
 		$controller -> loader = $this -> loader;
-		$controller -> request = $this -> request;
+		$controller -> request = $param;
 		$controller -> event = $this -> event;
 		if($init == true) $controller -> init();
 		$controller -> $aName($param);

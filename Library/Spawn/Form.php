@@ -32,8 +32,15 @@ class Form
 	* @var array
 	*/
 	protected $_toErrorArray = array();
-	
-	/**
+
+    /**
+     * lambda functions
+     *
+     * @var array
+     */
+    protected $_specialInput = array();
+
+    /**
 	* @var string 
 	*/
 	protected $_rowData = '<div class="control-group"><label class="control-label">{Label}<sup>{Required}</sup></label><div class="controls">{Input} {About}</div></div>';
@@ -572,6 +579,26 @@ class Form
 		$str .= '</ul>';
 		return $str;
 	}
+
+    /**
+     * @param string $name
+     * @param callback $call lambda function
+     * @return $this
+     */
+    public function setSpecialInput($name, $call)
+    {
+        $this->_specialInput[$name] = $call;
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return callback
+     */
+    public function getSpecialInput($name)
+    {
+        return $this->_specialInput[$name];
+    }
 	
 	/**
 	* create inputs in 'row' tags
@@ -663,9 +690,10 @@ class Form
 					$val = Arr::update($val, array('css', 'params'), '');
 					$inp = $this -> file($val['name'], $val['params']);
 				break;
-				case 'other':
-					$inp = $val['data'];	
-				break;
+                default:
+                    if(isset($this->_specialInput[$val['type']])){
+                        $inp = $this->_specialInput[$val['type']]($val);
+                    }
 			}
 			$val = Arr::update($val, array('error', 'about'), '');
 			if(isset($val['name']) AND in_array($val['name'], $this -> _toErrorArray)) $val['error'] = 1;

@@ -108,9 +108,7 @@ final class Spawn
 
         }catch(\Exception $error) {
             $this -> event  -> run('Spawn.Exception', $error) -> delete('Spawn.Exception');
-            $buff = ob_get_contents();
-            ob_end_clean();
-            include_once(ROOT_PATH . 'Application'. DIRECTORY_SEPARATOR .'View'. DIRECTORY_SEPARATOR .'Error'. DIRECTORY_SEPARATOR .'exception.phtml');
+            self::exceptionPage($error);
         }
     }
 	
@@ -183,15 +181,21 @@ final class Spawn
         }
         
         if(is_object($severity)){
-        	$error = $severity;
-        	$buff = ob_get_contents();
-            ob_end_clean();
-            include_once(ROOT_PATH . 'Application'. DIRECTORY_SEPARATOR .'View'. DIRECTORY_SEPARATOR .'Error'. DIRECTORY_SEPARATOR .'exception.phtml');
+        	self::exceptionPage($severity);
         }else{
         	throw new \ErrorException($message, E_ERROR, $severity, $filename, $lineno);
         }
     }
 
-
+    public static function exceptionPage($error)
+    {
+        $buff = ob_get_contents();
+        ob_end_clean();
+        if(DEV){
+            include_once(ROOT_PATH . 'Application'. DIRECTORY_SEPARATOR .'View'. DIRECTORY_SEPARATOR .'Error'. DIRECTORY_SEPARATOR .'exception.phtml');
+        }else{
+            include_once(ROOT_PATH . 'Application'. DIRECTORY_SEPARATOR .'View'. DIRECTORY_SEPARATOR .'Error'. DIRECTORY_SEPARATOR .'warning.phtml');
+        }
+    }
 
 }//spawn
