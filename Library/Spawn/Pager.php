@@ -5,7 +5,7 @@
 * Pager
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2011 Paweł Makowski
+* @copyright (c) 2010-2014 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 */
 namespace Spawn;
@@ -129,7 +129,7 @@ class Pager
 	/**
 	* @return integer
 	*/
-	public function getOffset()
+	public function offset()
 	{
 		return ($this -> cfg['page'])*$this -> cfg['limit'];
 	}
@@ -137,9 +137,9 @@ class Pager
 	/**
 	* @return integer
 	*/
-	public function getLimit()
+	public function limit()
 	{
-		return $this -> cfg['limit'];	
+		return $this -> cfg['limit'];
 	}
 	
 }//pager

@@ -5,7 +5,7 @@
  * Front controller
  *
  * @author  Paweł Makowski
- * @copyright (c) 2010-2013 Paweł Makowski
+ * @copyright (c) 2010-2014 Paweł Makowski
  * @license http://spawnframework.com/license New BSD License
  */
 namespace Spawn;
@@ -145,7 +145,7 @@ final class Spawn
             
             if(file_exists(ROOT_PATH.'.htaccess')) {
                 $htaccess = file_get_contents(ROOT_PATH.'.htaccess');
-                $htaccess = preg_replace('#RewriteBase (.*)#', 'RewriteBase '.$base, $htaccess);
+                $htaccess = preg_replace('#RewriteBase (.*)#i', 'RewriteBase '.$base, $htaccess);
                 file_put_contents(ROOT_PATH.'.htaccess', $htaccess);
             }
         }

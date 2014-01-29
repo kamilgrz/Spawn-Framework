@@ -81,7 +81,7 @@ class Firewall
         $controller->init();
         $controller->$name();
         $controller->end();
-        echo $controller -> response;
+        echo $controller->response;
         exit;
     }
 

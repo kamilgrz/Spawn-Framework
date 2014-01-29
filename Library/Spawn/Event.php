@@ -3,16 +3,18 @@
 * Spawn Framework
 *
 * Event
+*
 * Spawn.Ready
 * Spawn.Execute
 * Spawn.Finish
+* Spawn.Exception
 * Spawn.Shutdown
 * Spawn.404
 * Spawn.Redirect
 * Spawn.GetAction 
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2013 Paweł Makowski
+* @copyright (c) 2010-2014 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 */
 namespace Spawn;
@@ -49,7 +51,7 @@ class Event
     /**
      *
      * @param string $eventName
-     * @param array|string $callback
+     * @param array|string|lambda $callback
      * @param array $args
      * @return Event
      */

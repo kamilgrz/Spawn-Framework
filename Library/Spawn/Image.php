@@ -337,7 +337,7 @@ class Image
 	*@param string $size (max | min)
 	*@return $this
 	*/
-	public function trueResize($maxWidth, $maxHeight, $size = 'max')
+	public function trueResize($maxWidth, $maxHeight)
 	{
 		$startW = imagesx($this -> _img);
 		$startH = imagesy($this -> _img);
@@ -345,7 +345,7 @@ class Image
 		$heightRatio = $startH / $maxHeight;
 		$withRatio = $startW / $maxWidth;
 
-		$scale = $size($withRatio, $heightRatio);
+		$scale = max($withRatio, $heightRatio);
 
 		$newHeight = floor($startH / $scale);
 		$newWidth = floor($startW / $scale);

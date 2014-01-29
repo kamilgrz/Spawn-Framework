@@ -132,6 +132,7 @@ class Controller
 		if($init == true) $controller -> init();
 		$controller -> $aName($param);
 		if($end == true) $controller -> end();
+		return $controller->response;
 	}
 	
 	public function init(){}
