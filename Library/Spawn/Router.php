@@ -92,7 +92,7 @@ class Router
 	    $req = $this -> _uri -> path;
 		foreach($cfgArr as $key => $val)
 		{
-			if( preg_match('#'.$key.'#', $req) ){
+			if( preg_match('#'.$key.'#i', $req) ){
 				$this -> _isRoute = true;
 				$val = ( !is_callable($val) )? $val : $val($req);					
 				$this -> _val = $val;
