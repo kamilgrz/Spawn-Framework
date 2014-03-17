@@ -1,36 +1,36 @@
-<div class="pager">
+<ul class="pagination">
 <?
 if($back==true):
-	echo '<a href="'.str_replace('__PAGE__',($page-1),$href).'">« Back</a> ';
+	echo '<li><a href="'.str_replace('__PAGE__',($page-1),$href).'">« Back</a></li> ';
 else:
-	echo '« Back ';
+	echo '<li class="disabled"><a href="#">« Back</a></li>';
 endif;
 ?>
 
 <?php if ($page > 3): ?>
-	<a href="<?php echo str_replace('__PAGE__', 0, $href) ?>">1</a>
-	<?php if ($page != 4) echo '&hellip;' ?>
+	<li><a href="<?php echo str_replace('__PAGE__', 0, $href) ?>">1</a></li>
+	<?php if ($page != 4) echo '<li class="disabled"><a href="#">&hellip;</a><li/>' ?>
 <?php endif ?>
 
 <?php for ($i = $page - 2, $stop = $page + 3; $i < $stop; ++$i): ?>
 	<?php if ($i < 1 OR $i > $pages) continue ?>
 	<?php if ($page+1 == $i): ?>
-		<strong><?php echo $i ?></strong>
+		<li class="disabled"><a href="#"><?php echo $i ?></a></li>
 	<?php else: ?>
-		<a href="<?php echo str_replace('__PAGE__', $i-1, $href) ?>"><?php echo $i; ?></a>
+		<li><a href="<?php echo str_replace('__PAGE__', $i-1, $href) ?>"><?php echo $i; ?></a></li>
 	<?php endif ?>
 <?php endfor ?>
 
 <?php if ($page <= $pages - 3): ?>
-	<?php if ($page != $pages - 3) echo '&hellip;' ?>
-	<a href="<?php echo str_replace('__PAGE__', $pages-1, $href) ?>"><?php echo $pages ?></a>
+	<?php if ($page != $pages - 3) echo '<li class="disabled"><a href="#">&hellip;</a></li>' ?>
+	<li><a href="<?php echo str_replace('__PAGE__', $pages-1, $href) ?>"><?php echo $pages ?></a></li>
 <?php endif ?>
 	
 <?php
 if($next==true):
-	echo ' <a href="'.str_replace('__PAGE__',($page+1),$href).'">Next »</a>';
+	echo ' <li><a href="'.str_replace('__PAGE__',($page+1),$href).'">Next »</a></li>';
 else:
-	echo ' Next »';
+	echo '<li class="disabled"><a href="#">Next »</a></li>';
 endif;
 ?>
-</div>
+</ul>

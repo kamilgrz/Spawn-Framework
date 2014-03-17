@@ -1,17 +1,17 @@
-<div class="pager">
+<div class="pagination">
 <?php
 if($back==true){
-	echo '<a href="'.str_replace('__PAGE__',($page-1),$href).'">« Back</a> | ';
+	echo '<li><a href="'.str_replace('__PAGE__',($page-1),$href).'">« Back</a></li>';
 }else{
-	echo '« Back | ';
+	echo '<li class="disabled"><a href="#">« Back</li>';
 }
 
-echo ($page+1).' / '.$pages;
+echo '<li class="disabled"><a href="#">'.($page+1).' / '.$pages.'</a></li>';
 
 if($next==true){
-	echo ' | <a href="'.str_replace('__PAGE__',($page+1),$href).'">Next »</a>';
+	echo '<li><a href="'.str_replace('__PAGE__',($page+1),$href).'">Next »</a></li>';
 }else{
-	echo ' | Next »';
+	echo '<li class="disabled"><a href="#">Next »</li>';
 }
 ?>
 </div>

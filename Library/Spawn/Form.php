@@ -43,11 +43,11 @@ class Form
     /**
 	* @var string 
 	*/
-	protected $_rowData = '<div class="control-group"><label class="control-label">{Label}<sup>{Required}</sup></label><div class="controls">{Input} {About}</div></div>';
+	protected $_rowData = '<div class="form-group"><label class="control-label col-sm-1">{Label}<sup>{Required}</sup></label><div class="col-sm-11">{Input} {About}</div></div>';
     /**
 	* @var string
 	*/ 
-	protected $_rowDataError = '<div class="control-group error"><label class="control-label ">{Label}<sup>{Required}</sup></label><div class="controls">{Input} {About}</div></div>';
+	protected $_rowDataError = '<div class="form-group has-error"><label class="control-label col-sm-1">{Label}<sup>{Required}</sup></label><div class="col-sm-11">{Input} {About}</div></div>';
     /**
      * @var string
      */
@@ -57,6 +57,11 @@ class Form
      */
     protected $_radioLabel = '<label class="radio">{Data}</label>';
     
+    /**
+    * @var string
+    */
+    protected $_about = '<span class="help-block">{About}</span>';
+    
 	/**
 	* open form tag 
 	*
@@ -65,7 +70,7 @@ class Form
 	* @param array $params
 	* @return string
 	*/
-	public function open($action = '', $method = 'post', $params=null)
+	public function open($action = '', $method = 'post', $params=array('role'=>'form', 'class'=>'form-horizontal'))
 	{
 		//array('enctype'=>'multipart/form-data')
 		$params = (null != $params)? $this -> _params($params) : '';
@@ -149,7 +154,7 @@ class Form
 	* @param bool $filler
 	* @return string
 	*/
-	public function text($name, $value = '', $params = null, $filler = false)
+	public function text($name, $value = '', $params = array('class'=>'form-control'), $filler = false)
 	{
 		$filler = (true == $filler)? $this -> filler($value) : '';
 		$params = (null != $params)? $this -> _params($params) : '';
@@ -194,7 +199,7 @@ class Form
 	* @param bool $filler
 	* @return string
 	*/
-	public function password($name, $value = '', $params = null, $filler = false)
+	public function password($name, $value = '', $params = array('class'=>'form-control'), $filler = false)
 	{
 		$filler = (true == $filler)? $this -> filler($value) : '';
 		$params = (null != $params)? $this -> _params($params) : '';
@@ -210,7 +215,7 @@ class Form
 	* @param bool $filler
 	* @return string
 	*/
-	public function url($name, $value = '', $params = null, $filler = false)
+	public function url($name, $value = '', $params = array('class'=>'form-control'), $filler = false)
 	{
 		$filler = (true == $filler)? $this -> filler($value) : '';
 		$params = (null != $params)? $this -> _params($params) : '';
@@ -226,7 +231,7 @@ class Form
 	* @param bool $filler
 	* @return string
 	*/
-	public function email($name, $value = '', $params = null, $filler = false)
+	public function email($name, $value = '', $params = array('class'=>'form-control'), $filler = false)
 	{
 		$filler = (true == $filler)? $this -> filler($value) : '';
 		$params = (null != $params)? $this -> _params($params) : '';
@@ -416,7 +421,7 @@ class Form
 	* @param string $filler
 	* @return string
 	*/
-	public function textarea($name, $val = '', $params = null, $filler = false)
+	public function textarea($name, $val = '', $params = array('class'=>'form-control'), $filler = false)
 	{
 		$filler = (true == $filler)? $this -> filler($val) : '';
 		$params = (null != $params)? $this -> _params($params) : '';
@@ -488,6 +493,7 @@ class Form
 	public function row($label, $input, $about = '', $required = '',$error = false)
 	{
 		$rowData = (true == $error)? $this -> _rowDataError : $this -> _rowData;
+		if($about != '') $about = str_replace('{About}', $about, $this->_about);
 		$row = str_replace(
 			array('{Label}','{Input}','{About}','{Required}'), 
 			array($label, $input, $about, $required),
@@ -614,28 +620,43 @@ class Form
 			//switch input type and create it		
 			switch($val['type']){
 				case 'text': 
-					$val = Arr::update($val, array('name', 'value', 'params', 'filler'), '');
+					$val = Arr::update($val, array('name', 'value', 'filler'), '');
+					if(!isset($val['params'])){
+						$val['params'] = array('class'=>'form-control');
+					}
 					$inp = $this -> text($val['name'], $val['value'], $val['params'], $val['filler']);
 				break;
 				
 				case 'email': 
-					$val = Arr::update($val, array('name', 'value', 'params', 'filler'), '');
+					$val = Arr::update($val, array('name', 'value', 'filler'), '');
+					if(!isset($val['params'])){
+						$val['params'] = array('class'=>'form-control');
+					}
 					$inp = $this -> email($val['name'], $val['value'], $val['params'], $val['filler']);
 				break;
 				
 				case 'url': 
-					$val = Arr::update($val, array('name', 'value', 'params', 'filler'), '');
+					$val = Arr::update($val, array('name', 'value', 'filler'), '');
+					if(!isset($val['params'])){
+						$val['params'] = array('class'=>'form-control');
+					}
 					$inp = $this -> url($val['name'], $val['value'], $val['params'], $val['filler']);
 				break;
 				
 				case 'pass': 
 				case 'password':
-					$val = Arr::update($val, array('name', 'value', 'params', 'filler'), '');
+					$val = Arr::update($val, array('name', 'value', 'filler'), '');
+					if(!isset($val['params'])){
+						$val['params'] = array('class'=>'form-control');
+					}
 					$inp = $this -> password($val['name'], $val['value'], $val['params'], $val['filler']);
 				break;
 				
 				case 'textarea': 
-					$val = Arr::update($val, array('name', 'value', 'params', 'filler'), '');
+					$val = Arr::update($val, array('name', 'value', 'filler'), '');
+					if(!isset($val['params'])){
+						$val['params'] = array('class'=>'form-control');
+					}
 					$inp = $this -> textarea($val['name'], $val['value'], $val['params'], $val['filler']);
 				break;
 				

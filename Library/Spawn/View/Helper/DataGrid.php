@@ -142,7 +142,7 @@ class DataGrid
             if(is_callable($row)) {
                 $data = $row();
             }else {
-                $data = $form->text($row,$request->post($row), array('class'=>'input-small'));
+                $data = $form->text($row,$request->post($row), array('class'=>'form-control'));
             }
 
             $str .= '<th class="th_'.$i.'">'.$data.'</th>';
@@ -154,6 +154,18 @@ class DataGrid
 
         return $str;
     }
+    
+    /**
+    * @param string $name
+    * @return string
+    */
+    protected function _getRowParam($name)
+    {
+    	if($this->row instanceof \StdClass){
+    		return $this->row->{$name};
+    	}
+    	return $this->row[$name];
+    }
 
     /**
      * table rows
@@ -162,19 +174,19 @@ class DataGrid
      * @return self
      */
     public function rows($values, $info)
-    {
+    {    
         $rows='';
         $pri=null;
         $i=0;
         foreach($values as $data){
             $this->row = $data;
             $row = array();
-            $pri = $data->{$this->getPrimary()};
+            $pri = $this->_getRowParam($this->getPrimary());
             foreach($info as $key){
                 if( !is_array($key) ){
-                    $row[] = \Spawn\Filter::xss($data->{$key});
+                    $row[] = \Spawn\Filter::xss($this->_getRowParam($key));
                 }elseif( isset($key[1]) && is_callable($key[1]) ){
-                    $row[] = $key[1]($data->{$key[0]});
+                    $row[] = $key[1]($this->_getRowParam($key[0]));
                 }else{
                     $str = '';
                     foreach($key as $use ){

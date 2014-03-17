@@ -22,7 +22,7 @@ class Alert
     /**
      * @var string
      */
-    protected $_tplBlock = '<div class="alert alert-block {ALERT}"><button type="button" class="close" data-dismiss="alert">&times;</button><h4>{TITLE}</h4>{BODY}</div>';
+    protected $_tplBlock = '<div class="alert alert-block {ALERT}"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><h4>{TITLE}</h4>{BODY}</div>';
 
     /**
      * @var string
@@ -32,7 +32,7 @@ class Alert
     /**
      * @var array
      */
-    protected $_alert = array('error'=>'alert-error', 'info'=>'alert-info', 'success'=>'alert-success', 'warning'=>'');
+    protected $_alert = array('error'=>'alert-danger', 'info'=>'alert-info', 'success'=>'alert-success', 'warning'=>'alert-warning');
 
     /**
      *
@@ -203,6 +203,47 @@ class Alert
     public function get($isBlock = false)
     {
         return $this->_getData('warning', $isBlock);
+    }
+    
+    /**
+    * @return bool
+    */
+    public function hasInfo()
+    {
+    	return $this->_hasData('info');
+    }
+    
+    /**
+    * @return bool
+    */
+    public function hasError()
+    {
+    	return $this->_hasData('error');
+    }
+    
+    /**
+    * @return bool
+    */
+    public function hasSuccess()
+    {
+    	return $this->_hasData('success');
+    }
+    
+    /**
+    * @return bool
+    */
+    public function hasWarning()
+    {
+    	return $this->_hasData('warning');
+    }
+    
+    /**
+    * @param string $name
+    * @return bool
+    */
+    protected function _hasData($name)
+    {
+    	return (bool) $this->_session->getFlash($name,$this->_registry->get($name));
     }
 
     /**
