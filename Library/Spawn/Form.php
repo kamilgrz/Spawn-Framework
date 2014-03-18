@@ -615,6 +615,27 @@ class Form
 	public function create($input)
 	{
 		$form = '';
+		$inputs = $this->getInputs($input);
+		foreach($inputs as $key){
+			$form .= isset($key['label'])? $this -> row( 
+				$key['label'], 
+				$key['input'], 
+				$key['about'] , 
+				$key['required'], 
+				$key['error'] ) : $inp;
+		}
+		return $form;
+	}	
+	
+	/**
+	* create inputs array
+	*
+	* @param array $input
+	* @return array
+	*/
+	public function getInputs($input)
+	{
+		$inputs = array();
 		//create inputs
 		foreach($input as $key => $val){	
 			//switch input type and create it		
@@ -721,10 +742,10 @@ class Form
 			
 			//create input
 			$req = array_key_exists('required', $val)? '*' : '';
-			$form .= ( !in_array($val['type'], array('hidden', 'datalist') ) )? $this -> row( $key, $inp, $val['about'] , $req, $val['error']) : $inp;
+			$inputs[] = ( !in_array($val['type'], array('hidden', 'datalist') ) )? array( 'label'=>$key, 'input'=>$inp, 'about'=>$val['about'] , 'required'=>$req, 'error'=>$val['error']) : $inp;
 		}
-		return $form;
-	}	
+		return $inputs;
+	}
 		
 }//form
 
