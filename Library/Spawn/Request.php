@@ -5,7 +5,7 @@
 * Request
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2013 Paweł Makowski
+* @copyright (c) 2010-2014 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Request
 */
@@ -17,6 +17,18 @@ class Request
      * @var Request\Uri
      */
     public $uri;
+    
+    /**
+    * max nesting level
+    * @var integer
+    */
+    public static $nestingLvlMax = 3;
+    
+    /**
+    * actually level
+    * @var integer
+    */
+    protected $_nestingLvl = 1;
 	
 	/**
          * return $_GET param
@@ -30,7 +42,7 @@ class Request
 			if($pr == false){
 				return $this->_filterUTF8($_GET);
 			}	
-			$par = ( isset($_GET[ $pr ]) )? $this->_filterUTF8($_GET[ $pr ]) : $or;			
+			$par = (array_key_exists($_GET[ $pr ]))? $this->_filterUTF8($_GET[ $pr ]) : $or;
 		}else{
 			$par = $or;
 		}	
@@ -43,9 +55,14 @@ class Request
 	*/
 	protected function _filterUTF8($data)
 	{
+		if($this->_nestingLvl > self::$nestingLvlMax) {
+			Throw new \Exception('Request.filter: Too high level of nesting');
+		}
+		
 		if(!is_array($data)){
 			$par = Filter::utf8($data);
-		}else{
+		}else{	
+			$this->_nestingLvl++;		
 			$par = array();
 			if(Arr::IsAssoc($data)){
 				foreach($data as $key => $val){
@@ -57,9 +74,10 @@ class Request
 				}
 			}
 		}
+		$this->_nestingLvl = 1;
 		return $par;
 	}
-	
+		
 	/**
          * return $_POST param
          * @param string $pr
@@ -72,7 +90,7 @@ class Request
 			if($pr == false){
 				return $this->_filterUTF8($_POST);
 			}	
-			$par = ( isset($_POST[ $pr ]) )? $this->_filterUTF8($_POST[ $pr ]) : $or;
+			$par = (array_key_exists($pr, $_POST))? $this->_filterUTF8($_POST[ $pr ]) : $or;
 		}else{
 			$par = $or;
 		}	
