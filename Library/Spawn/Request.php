@@ -22,7 +22,7 @@ class Request
     * max nesting level
     * @var integer
     */
-    public static $nestingLvlMax = 3;
+    public $nestingLvlMax = 3;
     
     /**
     * actually level
@@ -55,7 +55,7 @@ class Request
 	*/
 	protected function _filterUTF8($data)
 	{
-		if($this->_nestingLvl > self::$nestingLvlMax) {
+		if($this->_nestingLvl > $this->nestingLvlMax) {
 			Throw new \Exception('Request.filter: Too high level of nesting');
 		}
 		
