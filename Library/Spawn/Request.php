@@ -5,7 +5,7 @@
 * Request
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2014 Paweł Makowski
+* @copyright (c) 2010-2013 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Request
 */
@@ -42,7 +42,7 @@ class Request
 			if($pr == false){
 				return $this->_filterUTF8($_GET);
 			}	
-			$par = (array_key_exists($_GET[ $pr ]))? $this->_filterUTF8($_GET[ $pr ]) : $or;
+			$par = (array_key_exists($pr, $_GET))? $this->_filterUTF8($_GET[ $pr ]) : $or;
 		}else{
 			$par = $or;
 		}	

@@ -51,11 +51,11 @@ class Form
     /**
      * @var string
      */
-    protected $_boxLabel = '<label class="checkbox">{Data}</label>';
+    protected $_boxLabel = '<label class="checkbox-inline">{Data}</label>';
     /**
      * @var string
      */
-    protected $_radioLabel = '<label class="radio">{Data}</label>';
+    protected $_radioLabel = '<label class="radio-inline">{Data}</label>';
     
     /**
     * @var string
@@ -622,7 +622,7 @@ class Form
 				$key['input'], 
 				$key['about'] , 
 				$key['required'], 
-				$key['error'] ) : $inp;
+				$key['error'] ) : $key['input'];
 		}
 		return $form;
 	}	
@@ -742,7 +742,7 @@ class Form
 			
 			//create input
 			$req = array_key_exists('required', $val)? '*' : '';
-			$inputs[] = ( !in_array($val['type'], array('hidden', 'datalist') ) )? array( 'label'=>$key, 'input'=>$inp, 'about'=>$val['about'] , 'required'=>$req, 'error'=>$val['error']) : $inp;
+			$inputs[] = ( !in_array($val['type'], array('hidden', 'datalist') ) )? array( 'label'=>$key, 'input'=>$inp, 'about'=>$val['about'] , 'required'=>$req, 'error'=>$val['error']) : array('input'=>$inp);
 		}
 		return $inputs;
 	}
