@@ -1,0 +1,69 @@
+<table class="table table-striped table-bordered table-hover table-condensed">
+
+<!-- header -->
+<thead>
+<tr>
+<?php
+foreach($headers as $key) {
+	$a = '<a href="?'.$key['key'].'='.$key['order'].'">'.$key['value'].'</a>';
+	echo '<th class="th_'.$key['key'].'">'.$a.'</th>';
+}
+?>
+</tr>
+
+<!-- search -->
+<?
+if($search != false):
+?>
+	<tr class="tr_search">
+	<form action="" method="post" class="form-search">
+	<?
+	$i=1;
+	$data = '';
+	foreach($search as $row) {
+		if(isset($row['input'])) {
+			$data = $row['input'];
+		}else {
+			$data = $form->text($row['row'], $row['value'], array('class'=>'form-control'));		
+		}
+
+		echo '<th class="th_'.$i.'">'.$data.'</th>';
+		$i++;
+	}
+	echo '<th>'.$form->submit('»').'</th>'
+	?>
+	</form>
+	</tr>
+<?
+endif;
+?>
+</thead>
+
+<!-- content -->
+<tbody>
+<?
+foreach($rows as $i => $row) {
+	$str = '';
+	foreach($row as $j => $val) {
+		$str .= '<td class="td_'.$j.'">'.$val.'</td>';
+	}
+	echo '<tr class="tr_'.$i.'">'.$str.'</tr>'.PHP_EOL;
+}
+?>
+</tbody>
+
+<!-- footer -->
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+

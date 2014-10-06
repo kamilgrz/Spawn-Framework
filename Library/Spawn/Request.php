@@ -5,7 +5,7 @@
 * Request
 *
 * @author  Paweł Makowski
-* @copyright (c) 2010-2013 Paweł Makowski
+* @copyright (c) 2010-2014 Paweł Makowski
 * @license http://spawnframework.com/license New BSD License
 * @package Request
 */
