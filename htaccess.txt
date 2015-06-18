@@ -2,7 +2,7 @@
 RewriteEngine On
 
 # Installation directory
-RewriteBase /Spawn-Framework/
+RewriteBase /
 
 # Protect application and system files from being viewed
 RewriteRule ^(Application|Library|Bin) - [F,L]
